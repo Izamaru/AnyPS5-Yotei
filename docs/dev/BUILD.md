@@ -131,6 +131,31 @@ build/core/libs/prx/libSceAgcDriver/agc_pm4_replay submits
 
 On Windows use `agc_pm4_replay.exe` and prepend `build/core/libs/libs/unpatched` to the process `PATH`. With `BUILD_TESTING=ON`, `agc_driver_pm4_replay` captures submissions made with the libSceAgc command builders through the driver and checks the index, the held waits, the conditional ranges, the dwords, the decode and the outcome of each wait, then checks hand-made captures: each release route; a store of another queue to the awaited bytes that entered before or after the store of the waiting queue (unknown); the label history limit, with the stores after the label on the waiting queue or on another queue; a fill the history does not keep; a store in an earlier submission overwritten later; later stores, rejected values and a missing rewind tail (unreleased); the six captures of the reviews (a two-queue deadlock, a store of 0 behind a released wait on another queue, with and without that wait held at submit, and labels pushed out of the history by stores of another queue), none of whose waits may be released except the one held at submit; five groups of waits in eight submission orders with identical outcomes; an index without the held and conditional columns; corrupt captures; then a failed write. `agc_driver_pm4_replay_tool` runs the tool on the driver capture and checks its exit codes and report.
 
+## Buffer retention
+
+`APS5_SMALL_POOL_MIB` and `APS5_HOST_POOL_MIB` set the per-pool retention budgets
+for the small and large host-visible buffer tiers. Defaults are 64 and 512 MiB.
+Each value is a whole number from 0 through 16384; invalid values use the default.
+Zero prevents that tier from retaining returned allocations. The values are read
+when each pool is constructed. `APS5_BUFFER_POOL_SHARED` uses the large tier for
+all host-visible sizes; `APS5_STAGING_POOL_MIB` controls device-local retention
+separately.
+
+These budgets apply to idle allocations available for reuse. They do not limit
+live buffers, memory owned by the guest or total process memory; slab backing
+keeps its separate spare-block policy. Lower budgets can increase allocation
+work when buffers are needed again.
+
+The retention tests compile the production pool with mock Vulkan operations,
+without a GPU or the other submodules:
+
+```sh
+git submodule update --init 3rdparty/Vulkan-Headers
+cmake -S core/libs/prx/libSceAgcDriver/tests/buffer_retention -B build-buffer-retention -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build-buffer-retention
+ctest --test-dir build-buffer-retention --output-on-failure
+```
+
 ## Pipeline statistics
 
 Set `APS5_PIPELINE_STATS=1` to capture and print driver statistics for each newly created graphics or compute pipeline. This requires `VK_KHR_pipeline_executable_properties` and `pipelineExecutableInfo`; an unsupported device fails with an error. Statistic names and units are driver-specific. Capturing statistics can increase pipeline compilation cost. The setting is disabled by default.
