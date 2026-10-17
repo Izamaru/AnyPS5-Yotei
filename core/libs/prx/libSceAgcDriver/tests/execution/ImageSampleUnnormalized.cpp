@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <span>
 #include <stdexcept>
@@ -98,6 +99,8 @@ struct SamplerCase {
     bool linear;
     bool border;
     bool atBaseLevel;
+    std::uint32_t wrapX = 2u;
+    std::uint32_t wrapY = 2u;
 };
 
 constexpr std::array<SamplerCase, 5> Samplers{{
@@ -247,6 +250,15 @@ Samples Run(AgcDriver::VulkanDevice& device, const Program& program, const std::
 std::array<double, 4> Fetch(const SamplerCase& sampler, std::uint32_t level, std::int32_t x, std::int32_t y) {
     const auto width = LevelWidth(level);
     const auto height = LevelHeight(level);
+    const auto wrap = [](std::int32_t value, std::int32_t length, std::uint32_t mode) {
+        if (mode > 1u) return value;
+        const auto period = mode == 0u ? length : 2 * length;
+        auto index = value % period;
+        if (index < 0) index += period;
+        return mode == 1u && index >= length ? period - index - 1 : index;
+    };
+    x = wrap(x, width, sampler.wrapX);
+    y = wrap(y, height, sampler.wrapY);
     if (sampler.border && (x < 0 || x >= width || y < 0 || y >= height)) return {0.0, 0.0, 0.0, 0.0};
     return TexelOf(level, std::clamp(x, 0, width - 1), std::clamp(y, 0, height - 1));
 }
@@ -336,7 +348,21 @@ int main() {
         ExpectFailure(*device, Gradient, chain, Samplers[0].words, "single-level", "a 4-level view read by image_sample_d");
         ExpectFailure(*device, LevelZero, chain, Samplers[2].words, "single-level", "a 4-level view through an S# with a minimum LOD and a LOD bias");
         ExpectFailure(*device, Plain, single, {0x00008092u, 0x00fff000u, 0x05100000u, 0u}, "different minification", "unequal minification and magnification filters");
-        ExpectFailure(*device, Plain, single, {0x00008090u, 0x00fff000u, 0x05500000u, 0u}, "clamp mode 0", "wrap on X");
+        const char* emulate = std::getenv("APS5_EMULATE_UNNORMALIZED_WRAP");
+        if (emulate != nullptr && emulate[0] == '1') {
+            auto wide = coordinates;
+            for (float u : {-53.75f, -26.5f, -13.25f, -0.25f, 12.75f, 13.25f, 26.5f, 52.75f})
+                for (float v : {-28.5f, -14.25f, -0.25f, 6.75f, 7.25f, 14.5f, 28.75f}) wide.push_back({u,v});
+            for (bool linear : {false,true}) for (std::uint32_t x : {0u,1u,2u}) for (std::uint32_t y : {0u,1u,2u}) {
+                SamplerCase sampler{"pixel-coordinate wrap emulation", {0x8000u | x | (y << 3u) | (2u << 6u), 0x00fff000u, linear ? 0x05500000u : 0x04000000u, 0u}, linear, false, true, x, y};
+                Check(Plain, sampler, 0u, "wrapped 13x7 image", wide, Run(*device, Plain, single, sampler.words, wide));
+                Check(LevelZero, sampler, 0u, "wrapped base level", wide, Run(*device, LevelZero, chain, sampler.words, wide));
+                Check(Offsets, sampler, 0u, "wrapped pixel offsets", offsetCoordinates, Run(*device, Offsets, single, sampler.words, offsetCoordinates));
+            }
+            std::puts("repeat/mirrored repeat pixel-coordinate GPU readback passed");
+        } else {
+            ExpectFailure(*device, Plain, single, {0x00008090u, 0x00fff000u, 0x05500000u, 0u}, "clamp mode 0", "wrap on X");
+        }
         const auto constantView = [&](std::uint32_t type, std::uint32_t format, std::uint32_t swizzle) {
             auto descriptor = TextureDescriptor(SingleLevel.data(), 0u, 0u);
             descriptor[1] = (descriptor[1] & ~(0x1ffu << 20u)) | (format << 20u);

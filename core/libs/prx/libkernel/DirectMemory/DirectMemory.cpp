@@ -4,6 +4,7 @@
 #include "prx/libc/include/GuestArena.hpp"
 #include "prx/libc/include/GuestWriteWatch.hpp"
 #include <algorithm>
+#include <atomic>
 #include <cerrno>
 #include <iterator>
 #include <map>
@@ -264,19 +265,43 @@ void ZeroReusedPhysical(std::uint64_t start, std::size_t bytes) {
 }
 #endif
 
+#ifdef _WIN32
+std::atomic<std::uint64_t> directBackingLive{0};
+std::atomic<std::uint64_t> directBackingPeak{0};
+
+void TraceDirectBacking(const char* event, std::uint64_t bytes, unsigned long error = 0) noexcept {
+    static const bool enabled = std::getenv("APS5_RESOURCE_TRACE") != nullptr;
+    if (!error && (!enabled || bytes < (64ull << 20u))) return;
+    MEMORYSTATUSEX state{};
+    state.dwLength = sizeof(state);
+    const bool available = GlobalMemoryStatusEx(&state) != 0;
+    std::fprintf(stderr, "[direct-memory] %s bytes=%llu live_backing=%llu peak_backing=%llu win_error=%lu memory_status=%s available_ram=%llu available_commit_for_process=%llu\n",
+        event, static_cast<unsigned long long>(bytes),
+        static_cast<unsigned long long>(directBackingLive.load()), static_cast<unsigned long long>(directBackingPeak.load()),
+        error, available ? "ok" : "unavailable", static_cast<unsigned long long>(state.ullAvailPhys), static_cast<unsigned long long>(state.ullAvailPageFile));
+    std::fflush(stderr);
+}
+#endif
+
 class PhysicalBacking {
 public:
     PhysicalBacking(std::size_t bytes, int memoryType, std::uint64_t start) : memoryType(memoryType), bytes(bytes) {
 #ifdef _WIN32
         static_cast<void>(start);
         const auto size = static_cast<std::uint64_t>(bytes);
+        TraceDirectBacking("request", size);
         section = CreateFileMappingW(INVALID_HANDLE_VALUE, nullptr, PAGE_EXECUTE_READWRITE | SEC_RESERVE, static_cast<DWORD>(size >> 32), static_cast<DWORD>(size), nullptr);
         if (!section) {
             const auto error = static_cast<int>(GetLastError());
+            TraceDirectBacking("failed", size, static_cast<unsigned long>(error));
             char message[96];
             std::snprintf(message, sizeof(message), "create direct memory backing of 0x%llx bytes (%llu MiB)", static_cast<unsigned long long>(size), static_cast<unsigned long long>((size + 0xFFFFF) >> 20));
             throw std::system_error(error, std::system_category(), message);
         }
+        const auto live = directBackingLive.fetch_add(size) + size;
+        auto peak = directBackingPeak.load();
+        while (peak < live && !directBackingPeak.compare_exchange_weak(peak, live)) {}
+        TraceDirectBacking("created", size);
 #else
         file = PhysicalFile();
         fileOffset = start;
@@ -304,6 +329,8 @@ public:
 #ifdef _WIN32
         GuestArena::GuestArenaForgetSection_nid_postfix(section);
         CloseHandle(section);
+        directBackingLive.fetch_sub(bytes);
+        TraceDirectBacking("released", bytes);
 #else
         if (hostWriteView != nullptr) ::munmap(hostWriteView, bytes);
 #endif

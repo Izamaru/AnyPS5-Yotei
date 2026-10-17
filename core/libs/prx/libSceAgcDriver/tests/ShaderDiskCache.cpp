@@ -56,7 +56,7 @@ void setEnvironment(const char* name, const std::string& value) {
 }
 
 bool sameBinding(const DescriptorBinding& left, const DescriptorBinding& right) {
-    return left.kind == right.kind && left.role == right.role && left.descriptorSet == right.descriptorSet && left.binding == right.binding && left.count == right.count && left.guestDescriptor == right.guestDescriptor && left.readOnly == right.readOnly && left.imageShape == right.imageShape && left.samplerDepthCompare == right.samplerDepthCompare && left.imageWritten == right.imageWritten && left.imageDepthCompare == right.imageDepthCompare && left.imageAtomic == right.imageAtomic && left.bufferAtomic == right.bufferAtomic && left.bufferWritten == right.bufferWritten && left.bufferRead == right.bufferRead && left.samplerUnnormalized == right.samplerUnnormalized && left.samplerIntegerBorder == right.samplerIntegerBorder && left.imageUnnormalized == right.imageUnnormalized && left.imageUnnormalizedBaseLevel == right.imageUnnormalizedBaseLevel && left.imageSamplers == right.imageSamplers;
+    return left.kind == right.kind && left.role == right.role && left.descriptorSet == right.descriptorSet && left.binding == right.binding && left.count == right.count && left.guestDescriptor == right.guestDescriptor && left.readOnly == right.readOnly && left.imageShape == right.imageShape && left.samplerDepthCompare == right.samplerDepthCompare && left.imageWritten == right.imageWritten && left.imageDepthCompare == right.imageDepthCompare && left.imageAtomic == right.imageAtomic && left.imageShapes == right.imageShapes && left.bufferAtomic == right.bufferAtomic && left.bufferWritten == right.bufferWritten && left.bufferRead == right.bufferRead && left.samplerUnnormalized == right.samplerUnnormalized && left.samplerIntegerBorder == right.samplerIntegerBorder && left.imageUnnormalized == right.imageUnnormalized && left.imageUnnormalizedBaseLevel == right.imageUnnormalizedBaseLevel && left.imageSamplers == right.imageSamplers;
 }
 
 bool sameBindings(const std::vector<DescriptorBinding>& left, const std::vector<DescriptorBinding>& right) {
@@ -97,6 +97,13 @@ void requireSameResult(const RecompileResult& left, const RecompileResult& right
     require(left.specialization == right.specialization, prefix + "specialization constants differ");
     require(left.workgroupMemoryDwords == right.workgroupMemoryDwords, prefix + "workgroup memory stride differs");
     require(left.poisonedSrtReads == right.poisonedSrtReads, prefix + "poisoned SRT read counts differ");
+    require(left.imageTableRanges == right.imageTableRanges && left.imageTableShader == right.imageTableShader && left.imageTableFaults == right.imageTableFaults && left.imageTablePoison.size() == right.imageTablePoison.size(), prefix + "image table invocation data differs");
+    require(left.imageTableReadRanges == right.imageTableReadRanges, prefix + "image table read ranges differ");
+    for (std::size_t i = 0; i < left.imageTablePoison.size(); ++i) {
+        const auto& a = left.imageTablePoison[i];
+        const auto& b = right.imageTablePoison[i];
+        require(a.words == b.words && a.dwordCount == b.dwordCount && a.resource == b.resource && a.reason == b.reason, prefix + "image table poison differs");
+    }
     require(left.vertexAttributes.size() == right.vertexAttributes.size(), prefix + "vertex attribute count differs");
     for (std::size_t i = 0; i < left.vertexAttributes.size(); ++i) {
         const auto& a = left.vertexAttributes[i];
@@ -132,6 +139,7 @@ DescriptorBinding sampleBinding(std::uint32_t seed) {
     binding.imageDepthCompare = {false, true, false};
     binding.imageWritten = {false, true, true};
     binding.imageAtomic = {false, true, false};
+    binding.imageShapes = {DescriptorImageShape::Image2D, DescriptorImageShape::Image3D};
     binding.bufferAtomic = {true};
     binding.bufferWritten = {false, false, true, true, false};
     binding.samplerUnnormalized = {false, true, true};
@@ -176,6 +184,11 @@ RecompileResult sampleResult() {
     result.poisonedSrtReads = 3;
     result.barycentricEmulation = {true, false, true};
     result.variantId = 99;
+    result.imageTablePoison = {{{1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u}, 8u, 2u, 6u}, {{9u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}, 4u, 0xffffffffu, 19u}};
+    result.imageTableRanges = {{0x1000u, 0x200u}, {0x5000000000ull, 48u}};
+    result.imageTableReadRanges = {{{0x1000u, 32u}, {0x1040u, 32u}}, {}, {{0x5000000000ull, 16u}}};
+    result.imageTableShader = 0x80003aa700ull;
+    result.imageTableFaults = 3u;
     return result;
 }
 
@@ -226,13 +239,13 @@ CompiledVariant sampleVariant() {
     image.foldTexelOffsetsOnly = true;
     image.byElements = 4;
     image.byComponents = 1;
-    image.indirectRoot = 0;
-    image.indirectMappingOffset = 12;
-    image.indirectSearchIterations = 3;
-    image.indirectResources = {1, 2, 3};
+    image.emulatedCompare = 0x1a07u;
+    image.table = 0;
+    image.tableOperation = TableOperation::Unsupported;
     info.info.images = {image};
     ResourceMaterializer::PrepareImageModes(info.info);
-    info.info.samplers = {{7, 0x10, 3, true, false, SamplerUseExplicitLod | SamplerUseGather, true}};
+    info.info.samplers = {{7, 0x10, 3, true, false, SamplerUseExplicitLod | SamplerUseGather, true, 1}};
+    info.info.usesFaultBuffer = true;
     info.info.sampledPairs = {{0, 0, 0x10}};
     StageInput input{};
     input.kind = StageInputKind::GlobalInvocationId;
@@ -1216,6 +1229,15 @@ std::vector<PlanFixture> planFixtures() {
     add("descriptor through a pointer", 64, {0xf4040280u, 0xfa000018u, 0xbf8cc07fu, 0xf4080105u, 0xfa000000u, 0xbf8cc07fu, 0x34040082u, 0xe0701000u, 0x80010002u, 0xbf810000u}, srtPointer, {{PlanSrtAddress, chained}, {PlanPointerAddress, bufferWords(PlanOutputAddress, 0u, 256u, 0x30027facu)}});
     add("descriptor invariant phi", 32, {0xf4000400u, 0xfa000050u, 0xf4080500u, 0xfa000020u, 0xbf8cc07fu, 0xbf068010u, 0xbf850003u, 0xf40c0200u, 0xfa000000u, 0xbf820002u, 0xf40c0200u, 0xfa000000u, 0xf4080600u, 0xfa000040u, 0xbf8cc07fu, 0xf09c0f08u, 0x00a20000u, 0xbf8c3f70u, 0xe0700000u, 0x80060000u, 0xbf810000u}, srtPointer, {{PlanSrtAddress, phis}});
 
+    std::vector<std::uint32_t> palette(0x50u + 257u * 8u, 0u);
+    place(palette, 0, bufferWords(PlanMaterialAddress, 0u, 32u));
+    place(palette, 4, bufferWords(PlanOutputAddress, 0u, 16u));
+    palette[12] = static_cast<std::uint32_t>(PlanSrtAddress + 0x140u);
+    palette[13] = static_cast<std::uint32_t>((PlanSrtAddress + 0x140u) >> 32u);
+    place(palette, 0x10u, imageWords(PlanTextureAddress));
+    place(palette, 0x18u, imageWords(PlanTextureAddress + 0x100u));
+    add("pointer image table", 64, {0xf4080200u, 0xfa000000u, 0xf4080700u, 0xfa000010u, 0xf4080800u, 0xfa000020u, 0x7e200500u, 0x8f108210u, 0xf4200444u, 0x20000000u, 0x8711ff11u, 0x000000ffu, 0x8f128511u, 0xf40c0900u, 0x24000040u, 0xf09c0f08u, 0x01090000u, 0xe0700000u, 0x80070000u, 0xbf810000u}, srtPointer, {{PlanSrtAddress, palette}, {PlanMaterialAddress, {0u, 1u, 0u, 1u, 0u, 0u, 0u, 0u}}});
+
     PlanFixture fragment;
     fragment.name = "fragment parameters";
     fragment.stage = ShaderStage::Fragment;
@@ -1237,10 +1259,10 @@ std::vector<PlanFixture> planFixtures() {
 
 IrResourcePlan handBuiltPlan() {
     IrResourcePlan plan;
+    plan.valueStorage.Reserve(64);
     std::uint32_t ids = 0;
     const auto make = [&](IrOpcode opcode, IrType type) -> IrValue& {
-        plan.valueStorage.push_back(std::make_unique<IrValue>(opcode, type, ids++));
-        return *plan.valueStorage.back();
+        return *plan.valueStorage.Create(opcode, type, ids++);
     };
     const auto constant = [&](std::uint32_t value) -> IrValue& {
         auto& immediate = make(IrOpcode::Void, IrType::U32);
@@ -1325,7 +1347,7 @@ IrResourcePlan handBuiltPlan() {
     DescriptorSource table;
     table.dwordCount = 8u;
     table.dwords[0] = &readConst(3);
-    table.indirectImage = DescriptorSource::IndirectImage{3u, 2u, 16u, 4u, 2u, 32u, true};
+    table.tableColumn = TableColumn{2u, 32u, 16u, 4u, 8u, 0xffu, false, true, {KeyDomain{3u, 4u, 16u, false}, KeyDomain{2u, 8u, 4u, true}}, false};
     DescriptorSource heap;
     heap.dwordCount = 4u;
     heap.dwords[1] = &readConst(6);
@@ -1366,14 +1388,14 @@ std::vector<std::byte> encodedPlan(const IrResourcePlan& plan) {
 }
 
 bool samePlan(const IrResourcePlan& left, const IrResourcePlan& right) {
-    if (left.valueStorage.size() != right.valueStorage.size() || left.blockStorage.size() != right.blockStorage.size()) return false;
+    if (left.valueStorage.Size() != right.valueStorage.Size() || left.blockStorage.size() != right.blockStorage.size()) return false;
     std::map<const IrValue*, std::size_t> leftValues;
     std::map<const IrValue*, std::size_t> rightValues;
     std::map<const IrBlock*, std::size_t> leftBlocks;
     std::map<const IrBlock*, std::size_t> rightBlocks;
-    for (std::size_t index = 0; index < left.valueStorage.size(); ++index) {
-        leftValues.emplace(left.valueStorage[index].get(), index);
-        rightValues.emplace(right.valueStorage[index].get(), index);
+    for (std::size_t index = 0; index < left.valueStorage.Size(); ++index) {
+        leftValues.emplace(&left.valueStorage[index], index);
+        rightValues.emplace(&right.valueStorage[index], index);
     }
     for (std::size_t index = 0; index < left.blockStorage.size(); ++index) {
         leftBlocks.emplace(left.blockStorage[index].get(), index);
@@ -1393,9 +1415,9 @@ bool samePlan(const IrResourcePlan& left, const IrResourcePlan& right) {
     for (std::size_t index = 0; index < left.blockStorage.size(); ++index) {
         if (left.blockStorage[index]->Id() != right.blockStorage[index]->Id()) return false;
     }
-    for (std::size_t index = 0; index < left.valueStorage.size(); ++index) {
-        const auto& a = *left.valueStorage[index];
-        const auto& b = *right.valueStorage[index];
+    for (std::size_t index = 0; index < left.valueStorage.Size(); ++index) {
+        const auto& a = left.valueStorage[index];
+        const auto& b = right.valueStorage[index];
         if (a.Opcode() != b.Opcode() || a.Type() != b.Type() || a.Id() != b.Id() || a.Flags<std::uint64_t>() != b.Flags<std::uint64_t>() || !(a.Register() == b.Register()) || a.HasImmediate() != b.HasImmediate() || (a.HasImmediate() && a.ImmediateU64() != b.ImmediateU64())) return false;
         if (a.ArgumentCount() != b.ArgumentCount() || a.IsPhi() != b.IsPhi() || a.PhiBlockCount() != b.PhiBlockCount()) return false;
         for (std::size_t operand = 0; operand < a.ArgumentCount(); ++operand) {
@@ -1410,7 +1432,7 @@ bool samePlan(const IrResourcePlan& left, const IrResourcePlan& right) {
     for (std::size_t index = 0; index < left.descriptorSources.size(); ++index) {
         const auto& a = left.descriptorSources[index];
         const auto& b = right.descriptorSources[index];
-        if (a.dwordCount != b.dwordCount || a.indirectImage != b.indirectImage) return false;
+        if (a.dwordCount != b.dwordCount || a.tableColumn != b.tableColumn || (a.tableColumn.has_value() && (a.tableColumn->keyDomains != b.tableColumn->keyDomains || a.tableColumn->unkeyed != b.tableColumn->unkeyed || a.tableColumn->maxKey != b.tableColumn->maxKey))) return false;
         for (std::size_t dword = 0; dword < a.dwords.size(); ++dword) {
             if (!sameValue(a.dwords[dword], b.dwords[dword])) return false;
         }
@@ -1447,14 +1469,14 @@ MaterializedPlan materializePlan(const IrResourcePlan& plan, SrtRuntime runtime)
     } catch (const std::exception& error) {
         outcome.error = error.what();
     }
-    outcome.leaf = static_cast<std::size_t>(std::find_if(plan.valueStorage.begin(), plan.valueStorage.end(), [&](const auto& value) { return value.get() == outcome.trace.leaf; }) - plan.valueStorage.begin());
+    outcome.leaf = static_cast<std::size_t>(std::find_if(plan.valueStorage.begin(), plan.valueStorage.end(), [&](const auto& value) { return &value == outcome.trace.leaf; }) - plan.valueStorage.begin());
     return outcome;
 }
 
 bool sameMaterialization(const MaterializedPlan& left, const MaterializedPlan& right) {
     const auto& a = left.snapshot;
     const auto& b = right.snapshot;
-    return left.ok == right.ok && left.error == right.error && a.buffers == b.buffers && a.images == b.images && a.samplers == b.samplers && a.flattenedSrt == b.flattenedSrt && a.userData == b.userData && a.uniformFill == b.uniformFill && a.srtPoison == b.srtPoison && a.nullRootReads == b.nullRootReads &&
+    return left.ok == right.ok && left.error == right.error && a.buffers == b.buffers && a.images == b.images && a.samplers == b.samplers && a.flattenedSrt == b.flattenedSrt && a.userData == b.userData && a.uniformFill == b.uniformFill && a.srtPoison == b.srtPoison && a.nullRootReads == b.nullRootReads && a.tables == b.tables &&
            left.leaf == right.leaf && left.trace.leafSlot == right.trace.leafSlot && left.trace.leaves == right.trace.leaves && left.trace.otherReads == right.trace.otherReads;
 }
 
@@ -1572,23 +1594,19 @@ void verifyMalformedPlans() {
     rejects("an image past the sources", [](IrResourcePlan& plan) { plan.info.images[0].source = 5u; });
     rejects("a descriptor of nine dwords", [](IrResourcePlan& plan) { plan.descriptorSources[1].dwordCount = 9u; });
     rejects("a uniform fill of five words", [](IrResourcePlan& plan) { plan.uniformFill.fill.words = 5u; });
-    rejects("an image table heap past the sources", [](IrResourcePlan& plan) { plan.descriptorSources[1].indirectImage->heapSource = 4u; });
-    rejects("an image table material past the sources", [](IrResourcePlan& plan) { plan.descriptorSources[1].indirectImage->materialSource = 4u; });
+    rejects("an image table heap past the sources", [](IrResourcePlan& plan) { plan.descriptorSources[1].tableColumn->heapSource = 4u; });
+    rejects("an image table key past the sources", [](IrResourcePlan& plan) { plan.descriptorSources[1].tableColumn->keyDomains[1].source = 4u; });
     auto foreign = handBuiltPlan();
     IrValue stray(IrOpcode::Void, IrType::U32, 99u);
     foreign.srtReads[0].value = &stray;
     std::vector<std::byte> bytes;
     require(!ShaderDiskCache::EncodePlan(foreign, bytes), "a plan reading a value it does not own was encoded");
     auto unblocked = handBuiltPlan();
-    auto& phi = *unblocked.valueStorage.emplace_back(std::make_unique<IrValue>(IrOpcode::Phi, IrType::U32, 100u));
-    phi.AddArgument(unblocked.valueStorage[0].get());
+    auto& phi = *unblocked.valueStorage.Create(IrOpcode::Phi, IrType::U32, 100u);
+    phi.AddArgument(&unblocked.valueStorage[0]);
     unblocked.srtReads[0].value = &phi;
     bytes.clear();
     require(!ShaderDiskCache::EncodePlan(unblocked, bytes), "a phi without predecessor blocks was encoded");
-    auto emptied = handBuiltPlan();
-    emptied.valueStorage.push_back(nullptr);
-    bytes.clear();
-    require(!ShaderDiskCache::EncodePlan(emptied, bytes), "a plan with an empty value slot was encoded");
 }
 
 void verifyPlanRoundTrip() {
@@ -1596,7 +1614,7 @@ void verifyPlanRoundTrip() {
     const auto handBytes = encodedPlan(handBuilt);
     IrResourcePlan handDecoded;
     require(ShaderDiskCache::DecodePlan(handBytes, handDecoded), "the hand-built plan does not decode");
-    require(encodedPlan(handDecoded) == handBytes && handDecoded.valueStorage.size() == handBuilt.valueStorage.size() && handDecoded.blockStorage.size() == handBuilt.blockStorage.size(), "the hand-built plan changed in a round trip");
+    require(encodedPlan(handDecoded) == handBytes && handDecoded.valueStorage.Size() == handBuilt.valueStorage.Size() && handDecoded.blockStorage.size() == handBuilt.blockStorage.size(), "the hand-built plan changed in a round trip");
     const auto& phi = *handDecoded.descriptorSources[0].dwords[2];
     require(phi.IsPhi() && phi.PhiBlockCount() == 2u && phi.PhiBlock(0)->Id() == 3u && phi.PhiBlock(1)->Id() == 7u && phi.Argument(1)->ImmediateU32() == 0u, "the decoded phi lost its blocks or operands");
     require(handDecoded.uniformFill.values[0] == handDecoded.uniformFill.values[1] && handDecoded.uniformFill.values[0] != nullptr && handDecoded.uniformFill.values[2] == nullptr, "the decoded uniform fill lost its shared or null values");
@@ -1622,21 +1640,23 @@ void verifyPlanRoundTrip() {
         require(ShaderDiskCache::DecodePlan(bytes, decoded), fixture.name + ": the plan does not decode");
         require(encodedPlan(decoded) == bytes, fixture.name + ": the plan changed in a round trip");
         require(samePlan(*plan, decoded), fixture.name + ": the decoded plan differs from the plan in a field or a value");
-        require(decoded.valueStorage.size() == plan->valueStorage.size() && decoded.blockStorage.size() == plan->blockStorage.size(), fixture.name + ": the decoded plan holds another graph");
+        require(decoded.valueStorage.Size() == plan->valueStorage.Size() && decoded.blockStorage.size() == plan->blockStorage.size(), fixture.name + ": the decoded plan holds another graph");
         const auto succeeded = verifyRoundTripRuntimes(*plan, decoded, fixture, 0x5eedu + static_cast<std::uint32_t>(index), fixture.name);
         require(succeeded != 0u, fixture.name + ": no runtime materialized");
         std::vector<std::byte> key;
         ShaderDiskCache::BuildPlanKey(request, 32u, key);
         if (index % 4u == 0u) verifyPlanEntryDamage(key, *plan, fixture.name);
-        std::cout << "plan round trip: " << fixture.name << ", " << plan->valueStorage.size() << " values, " << ShaderDiskCache::EncodePlanEntry(key, *plan).size() << " bytes per entry, " << succeeded << " of 1000 runtimes materialized\n";
+        std::cout << "plan round trip: " << fixture.name << ", " << plan->valueStorage.Size() << " values, " << ShaderDiskCache::EncodePlanEntry(key, *plan).size() << " bytes per entry, " << succeeded << " of 1000 runtimes materialized\n";
         ++index;
     }
     const auto covers = [&](const std::function<bool(const IrResourcePlan&)>& predicate) {
         return std::any_of(plans.begin(), plans.end(), [&](const std::shared_ptr<const IrResourcePlan>& plan) { return predicate(*plan); });
     };
-    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.descriptorSources.begin(), plan.descriptorSources.end(), [](const DescriptorSource& source) { return source.indirectImage.has_value(); }); }), "no fixture plans an indirect image table");
+    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.descriptorSources.begin(), plan.descriptorSources.end(), [](const DescriptorSource& source) { return source.tableColumn.has_value() && source.tableColumn->keyDomains.empty(); }); }), "no fixture plans a whole image table");
+    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.descriptorSources.begin(), plan.descriptorSources.end(), [](const DescriptorSource& source) { return source.tableColumn.has_value() && !source.tableColumn->keyDomains.empty(); }); }), "no fixture plans an image table with a key domain");
+    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.descriptorSources.begin(), plan.descriptorSources.end(), [](const DescriptorSource& source) { return source.tableColumn.has_value() && source.tableColumn->address; }); }), "no fixture plans an image table through a pointer");
     require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.controlFlow.begin(), plan.controlFlow.end(), [](const ResourceBlock& block) { return block.condition != nullptr; }); }), "no fixture plans a control-flow condition");
-    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.valueStorage.begin(), plan.valueStorage.end(), [](const auto& value) { return value->IsPhi(); }); }), "no fixture plans a phi");
+    require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.valueStorage.begin(), plan.valueStorage.end(), [](const auto& value) { return value.IsPhi(); }); }), "no fixture plans a phi");
     require(covers([](const IrResourcePlan& plan) { return !plan.guardedSrtSlots.empty(); }), "no fixture plans a guarded SRT read");
     require(covers([](const IrResourcePlan& plan) { return std::any_of(plan.pureFlatSlots.begin(), plan.pureFlatSlots.end(), [](std::uint8_t pure) { return pure != 0u; }); }), "no fixture plans a pure flat slot");
 }
@@ -1743,7 +1763,7 @@ std::filesystem::path planEntryPath(PlanFixture& fixture) {
 }
 
 int runPlanLoadingProcess(std::string_view mode) {
-    if (mode == "--load-plan-switch") setEnvironment("APS5_TRACE_BINDLESS", "1");
+    if (mode == "--load-plan-switch") setEnvironment("APS5_TRACE_IMAGE_TABLE", "1");
     if (mode == "--load-plan-off") setEnvironment("APS5_NO_PERF_DISK_PLANS", "1");
     auto fixtures = planFixtures();
     const auto count = fixtures.size();

@@ -193,7 +193,7 @@ void FailureCapture(AgcDriver::VulkanDevice& device) {
     const auto expected = failure([&] { static_cast<void>(PrepareShader(request)); });
     const char* previous = std::getenv("APS5_DUMP_SHADERS");
     const std::string saved = previous != nullptr ? previous : "";
-    const std::string path = "shader_12345cafe.req";
+    const std::string path = "shader_12345cafe_registration.req";
     std::remove(path.c_str());
 #ifdef _WIN32
     Require(_putenv_s("APS5_DUMP_SHADERS", "") == 0, "cannot disable shader capture");
@@ -645,8 +645,64 @@ void DeferredUndecodableRegistration() {
 
 }
 
+
+void LazyRegistrationMemory() {
+    using namespace ShaderRecompiler;
+    struct alignas(256) Code { std::array<std::uint32_t, 64> words{}; };
+    struct Header { Shader shader{}; std::array<ShaderRegister, 7> registers{}; ShaderSpecialRegs specials{}; };
+    std::vector<Code> codes(257);
+    std::vector<Header> headers(codes.size());
+    const auto initialize = [&](std::size_t index) {
+        auto& code = codes[index].words;
+        code[0] = 0xbf800000u | static_cast<std::uint32_t>(index); // s_nop
+        code[1] = 0xbf810000u; // s_endpgm
+        auto& header = headers[index];
+        const auto address = reinterpret_cast<std::uintptr_t>(code.data());
+        header.shader.file_header = 0x34333231u;
+        header.shader.version = 0x18;
+        header.shader.header_size = sizeof(Header);
+        header.shader.shader_size = 8;
+        header.shader.code = code.data();
+        header.shader.sh_registers = header.registers.data();
+        header.shader.num_sh_registers = header.registers.size();
+        header.shader.specials = &header.specials;
+        header.specials.dispatch_modifier = 0x8000;
+        header.registers = {{{0x20c, static_cast<std::uint32_t>(address >> 8u)},
+            {0x20d, static_cast<std::uint32_t>(address >> 40u)}, {0x207, 1},
+            {0x208, 1}, {0x209, 1}, {0x212, 0}, {0x213, 0}}};
+    };
+    initialize(0);
+    AgcDriverRegisterShader_nid_postfix(&headers[0].shader);
+    AgcDriver::DriverDetail::CloseRegistrationPreparation();
+    const auto before = FrontEndBuilds();
+    for (std::size_t i = 1; i < codes.size(); ++i) {
+        initialize(i);
+        AgcDriverRegisterShader_nid_postfix(&headers[i].shader);
+    }
+    AgcDriver::DriverDetail::CloseRegistrationPreparation();
+    Require(FrontEndBuilds() == before, "unused registered shaders were eagerly compiled and retained");
+    std::vector<std::uint32_t> commands;
+    for (const auto reg : headers.back().registers) commands.insert(commands.end(), {0xc0017600u, reg.offset, reg.value});
+    commands.insert(commands.end(), {0xc0031500u, 1, 1, 1, 0x8041});
+    Packet packet{commands.data(), static_cast<std::uint32_t>(commands.size()), 0, {}};
+    sceAgcDriverSubmitAcb(0x20, &packet);
+    AgcDriverWaitIdle_nid_postfix();
+    const auto firstUse = FrontEndBuilds();
+    Require(firstUse > before, "first use did not compile the deferred shader");
+    sceAgcDriverSubmitAcb(0x20, &packet);
+    AgcDriverWaitIdle_nid_postfix();
+    Require(FrontEndBuilds() == firstUse, "repeated use compiled a deferred shader again");
+    AgcDriverShutdown_nid_postfix();
+    std::cout << "256 unused registrations: no frontend builds; first dispatch compiled; repeat reused artifact\n";
+}
+
 int main(int argc, char** argv) {
     try {
+        if (argc == 2 && std::string_view(argv[1]) == "--lazy-registration-memory") {
+            if (!OpenVulkanTestDevice()) return VulkanTestSkipped;
+            LazyRegistrationMemory();
+            return 0;
+        }
         Require(argc == 1 || (argc == 2 && (std::string_view(argv[1]) == "--indirect" || std::string_view(argv[1]) == "--fail-before-registration" || std::string_view(argv[1]) == "--deferred" || std::string_view(argv[1]) == "--deferred-undecodable" || std::string_view(argv[1]) == "--registered-workgroup")), "invalid test arguments");
         if (argc == 2 && std::string_view(argv[1]) == "--registered-workgroup") {
             const auto device = OpenVulkanTestDevice();

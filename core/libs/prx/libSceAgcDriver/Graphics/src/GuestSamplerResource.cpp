@@ -89,11 +89,12 @@ GuestSamplerResource DecodeSamplerResource(std::span<const std::uint32_t> words,
     const auto borderColorType = (words[3] >> 30u) & 0x3u;
 
     Require(!forceUnormCoords || unnormalizedProven, "guest sampler descriptor uses unnormalized coordinates which are not implemented");
+    static const bool emulateWrap = [] { const char* value = std::getenv("APS5_EMULATE_UNNORMALIZED_WRAP"); return value != nullptr && value[0] == '1' && value[1] == '\0'; }();
     if (forceUnormCoords) {
         Require(xyMagFilter == xyMinFilter, "guest sampler descriptor uses unnormalized coordinates with different minification and magnification filters, which is not implemented");
         Require(!isAnisoFilter(xyMagFilter), "guest sampler descriptor uses unnormalized coordinates with anisotropic filtering, which is not implemented");
-        Require(clampX == 2u || clampX == 6u, "guest sampler descriptor uses unnormalized coordinates with clamp mode " + std::to_string(clampX) + " on X; only clamp-to-last-texel and clamp-to-border are implemented");
-        Require(clampY == 2u || clampY == 6u, "guest sampler descriptor uses unnormalized coordinates with clamp mode " + std::to_string(clampY) + " on Y; only clamp-to-last-texel and clamp-to-border are implemented");
+        Require(clampX == 2u || clampX == 6u || (emulateWrap && clampX <= 1u), "guest sampler descriptor uses unnormalized coordinates with clamp mode " + std::to_string(clampX) + " on X; only clamp-to-last-texel and clamp-to-border are implemented");
+        Require(clampY == 2u || clampY == 6u || (emulateWrap && clampY <= 1u), "guest sampler descriptor uses unnormalized coordinates with clamp mode " + std::to_string(clampY) + " on Y; only clamp-to-last-texel and clamp-to-border are implemented");
         Require(!truncCoord, "guest sampler descriptor uses unnormalized coordinates with TRUNC_COORD, which is not implemented");
         Require(!mcCoordTrunc, "guest sampler descriptor uses unnormalized coordinates with MC_COORD_TRUNC, which is not implemented");
     } else {

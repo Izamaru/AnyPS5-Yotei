@@ -1009,6 +1009,10 @@ if(BUILD_TESTING)
     if(WIN32)
         set_tests_properties(agc_host_import_unmap agc_parked_import_unmap agc_host_import_retirement agc_unit_shadow agc_descriptor_pool_recycling agc_draw_snapshot_cap agc_multisample_guest_access agc_draw_inputs_in_place agc_resident_present agc_slice_dirty agc_queued_write_groups PROPERTIES ENVIRONMENT_MODIFICATION
             "PATH=path_list_prepend:$<TARGET_FILE_DIR:libc>")
+        add_test(NAME agc_host_import_resident_alias COMMAND agc_driver_recorder_tests --resident-alias-import-only)
+        set_tests_properties(agc_host_import_resident_alias PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 30
+            ENVIRONMENT "APS5_WINDOWS_ALIAS_IMPORTS=1;APS5_KEYS_FILL_CLEAR=1;ANYPS5_NO_SHADER_CACHE=1"
+            ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<TARGET_FILE_DIR:libc>")
         add_test(NAME agc_host_import_second_mapping COMMAND agc_driver_recorder_tests --host-import-second-mapping-only)
         set_tests_properties(agc_host_import_second_mapping PROPERTIES SKIP_RETURN_CODE 77 ENVIRONMENT_MODIFICATION
             "PATH=path_list_prepend:$<TARGET_FILE_DIR:libc>")

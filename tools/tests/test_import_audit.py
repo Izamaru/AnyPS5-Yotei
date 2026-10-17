@@ -168,6 +168,51 @@ class Workspace:
 
 
 class ImportAuditTests(unittest.TestCase):
+    def test_converted_pe_cli_checks_symbols_and_reads_its_registry_imports(self):
+        work = self.work
+        (work.libs / "libHost.prx").write_bytes(exporting("CCCCCCCCCCC"))
+        (work.modules / "libc.prx.guest.prx").write_bytes(build_pe(["AAAAAAAAAAA"]))
+        registry = work.root / "game.json"
+        write_registry(registry, [("AAAAAAAAAAA", "libc.prx"), ("BBBBBBBBBBB", "libc.prx"), ("CCCCCCCCCCC", "libHost.prx")])
+        result = work.root / "audit.json"
+        code, out, err = work.run(registry, "--json", str(result))
+        self.assertEqual((code, err), (1, ""))
+        data = json.loads(result.read_text())
+        self.assertEqual(data["unique_by_class"], {"implemented": 1, "stub": 0, "absent": 1, "module": 1})
+        self.assertEqual(data["references"], 3)
+
+    def test_converted_guest_checks_exports_and_does_not_hide_missing_symbols(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "libc.prx.guest.prx"
+            path.write_bytes(build_pe(["AAAAAAAAAAA"]))
+            guest = import_audit.converted_module_exports([tmp])
+            records, missing = import_audit.audit(
+                [("AAAAAAAAAAA", "libc.prx"), ("BBBBBBBBBBB", "libc.prx"),
+                 ("AAAAAAAAAAA", "libOther.prx")], {}, {}, set(), set(), guest_exports=guest)
+            by_key = {(r["nid"], r["library"]): r for r in records}
+            self.assertEqual(by_key[("AAAAAAAAAAA", "libc.prx")]["class"], "module")
+            self.assertEqual(by_key[("AAAAAAAAAAA", "libc.prx")]["providers"], ["libc.prx.guest.prx"])
+            self.assertEqual(by_key[("BBBBBBBBBBB", "libc.prx")]["class"], "absent")
+            self.assertEqual(by_key[("AAAAAAAAAAA", "libOther.prx")]["class"], "absent")
+            self.assertEqual(missing, {"libOther.prx": 1})
+
+    def test_guest_export_precedes_host_stub_but_not_other_library_stubs(self):
+        records, _ = import_audit.audit(
+            [("AAAAAAAAAAA", "libc.prx"), ("BBBBBBBBBBB", "libAudio.prx")],
+            {"AAAAAAAAAAA": ["libc.prx"], "BBBBBBBBBBB": ["libAudio.prx"]},
+            {("libc.prx", "AAAAAAAAAAA"): "stubA", ("libAudio.prx", "BBBBBBBBBBB"): "stubB"},
+            {"libc.prx", "libAudio.prx"}, set(), guest_exports={"libc.prx": {"AAAAAAAAAAA"}})
+        by_nid = {r["nid"]: r for r in records}
+        self.assertEqual(by_nid["AAAAAAAAAAA"]["class"], "module")
+        self.assertFalse(by_nid["AAAAAAAAAAA"]["library_mismatch"])
+        self.assertEqual(by_nid["BBBBBBBBBBB"]["class"], "stub")
+
+    def test_invalid_converted_guest_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "libc.prx.guest.prx").write_bytes(b"MZ")
+            with self.assertRaises(import_audit.AuditError):
+                import_audit.converted_module_exports([tmp])
+
     def setUp(self):
         self.work = Workspace()
         self.addCleanup(self.work.close)

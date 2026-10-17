@@ -6472,6 +6472,95 @@ void Run(Context context) {
 }
 #endif
 
+#ifdef _WIN32
+void residentAliasTest(const Context& context, bool previouslyUnwatched, bool partialRegistration) {
+    using namespace AgcDriver::GuestMemory;
+    constexpr std::size_t bytes = 1u << 20;
+    // Unwatch is intentionally conservative for the process lifetime. Use a
+    // different returned arena region for each case rather than recycling one
+    // deliberately made untracked by the previous safety test.
+    static std::size_t fixtureIndex = 0;
+    std::uintptr_t arenaBase = 0;
+    std::size_t arenaBytes = 0;
+    GuestArena::GuestArenaRange_nid_postfix(&arenaBase, &arenaBytes);
+    const auto hint = arenaBase + fixtureIndex++ * (4u << 20);
+    Require(hint + bytes <= arenaBase + arenaBytes, "resident fixture exceeds the guest arena");
+    void* memory = GuestArena::GuestArenaAllocateAtOrAbove_nid_postfix(hint, bytes, 65536);
+    Require(memory != nullptr, "resident fixture allocation failed");
+    const auto section = CreateFileMappingW(INVALID_HANDLE_VALUE, nullptr, PAGE_EXECUTE_READWRITE | SEC_RESERVE, 0, bytes, nullptr);
+    Require(section != nullptr, "resident fixture section failed");
+    GuestArena::GuestArenaMapDirect_nid_postfix(memory, bytes, section, 0, PAGE_READWRITE);
+    std::memset(memory, 0x55, bytes);
+    const auto allocationAddress = reinterpret_cast<std::uint64_t>(memory);
+    const auto address = allocationAddress + (partialRegistration ? 65536 : 0);
+    const auto registeredBytes = partialRegistration ? 65536 : bytes;
+    struct Cleanup {
+        const Context& context;
+        void* memory;
+        std::uint64_t address;
+        std::size_t registeredBytes;
+        HANDLE section;
+        ~Cleanup() {
+            GuestAllocations::Mutation().Remove(reinterpret_cast<void*>(address));
+            HostImportFor(context, address, registeredBytes);
+            GuestArena::GuestArenaReset_nid_postfix(memory, bytes);
+            GuestArena::GuestArenaRelease_nid_postfix(memory, bytes);
+            GuestArena::GuestArenaForgetSection_nid_postfix(section);
+            CloseHandle(section);
+        }
+    } cleanup{context, memory, address, registeredBytes, section};
+    GuestAllocations::Mutation().Add(reinterpret_cast<void*>(address), registeredBytes, true, true, true);
+    MEMORY_BASIC_INFORMATION before{};
+    VirtualQuery(memory, &before, sizeof(before));
+    Require(before.Type == MEM_PRIVATE, "fixture must start as private resident direct memory");
+    Require(Watched(address, registeredBytes), "new resident fixture is not write-watched");
+    if (previouslyUnwatched) Unwatch(address, registeredBytes);
+    const auto* imported = HostImportFor(context, address, registeredBytes);
+    Require(imported != nullptr, "resident fixture import failed");
+    if (previouslyUnwatched || partialRegistration) {
+        Require(imported->alias == nullptr, "unsafe/partial resident backing was demoted");
+        MEMORY_BASIC_INFORMATION after{};
+        VirtualQuery(memory, &after, sizeof(after));
+        Require(after.Type == MEM_PRIVATE, "guarded resident backing changed");
+        std::cout << (previouslyUnwatched ? "Unwatched backing guard passed\n" : "Partial resident-run guard passed\n");
+        return;
+    }
+    Require(imported->alias != nullptr && !imported->unwatched, "resident memory was not imported through a watched alias");
+    Require(Watched(address, bytes), "alias import lost CPU write tracking");
+    CollectWritesUncached(address, bytes);
+    const auto generation = TrackerGeneration();
+    {
+        CommandBatch batch(context);
+        context.Function<PFN_vkCmdFillBuffer>("vkCmdFillBuffer")(batch.Handle(), imported->buffer, address - imported->base, bytes, 0x11223344u);
+        RecordMemoryBarrier(context, batch.Handle(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT);
+        batch.SubmitAndWait();
+    }
+    CollectWritesUncached(address, bytes);
+    Require(UnchangedSince(address, bytes, generation), "GPU alias accesses were mistaken for CPU writes");
+    auto* words = static_cast<volatile std::uint32_t*>(memory);
+    Require(words[0] == 0x11223344u && words[bytes / 4 - 1] == 0x11223344u, "GPU alias writes did not reach guest memory");
+    words[0] = 0xaabbccddu;
+    CollectWritesUncached(address, bytes);
+    Require(!UnchangedSince(address, bytes, generation), "CPU write after alias import was not detected");
+    Buffer readback(context, bytes, VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+    {
+        CommandBatch batch(context);
+        RecordMemoryBarrier(context, batch.Handle(), VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT);
+        VkBufferCopy copy{address - imported->base, 0, bytes};
+        context.Function<PFN_vkCmdCopyBuffer>("vkCmdCopyBuffer")(batch.Handle(), imported->buffer, readback.Handle(), 1, &copy);
+        RecordMemoryBarrier(context, batch.Handle(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT);
+        batch.SubmitAndWait();
+    }
+    std::uint32_t first = 0, last = 0;
+    const auto output = readback.Bytes();
+    std::memcpy(&first, output.data(), sizeof(first));
+    std::memcpy(&last, output.data() + bytes - sizeof(last), sizeof(last));
+    Require(first == 0xaabbccddu && last == 0x11223344u, "CPU write was not visible to a later GPU alias read");
+    std::cout << "Resident alias: GPU-to-CPU, CPU write detection and CPU-to-GPU readback passed\n";
+}
+
+#endif
+
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string_view(argv[1]) == "--queued-write-groups-only") {
@@ -6526,6 +6615,17 @@ int main(int argc, char** argv) {
         std::cout << "host imports " << (PrepareImportWatch(device.GetContext()) == ImportWatch::Unwatch ? "are compared" : "stay watched") << '\n';
         Recorder recorder(device.GetContext());
         recorder.Activate();
+#ifdef _WIN32
+        if (argc == 2 && std::string_view(argv[1]) == "--resident-alias-import-only") {
+            residentAliasTest(device.GetContext(), false, false);
+            residentAliasTest(device.GetContext(), true, false);
+            residentAliasTest(device.GetContext(), false, true);
+            keysFillTests(device, recorder);
+            recorder.Sync();
+            std::cout << "Watched resident alias regression tests passed\n";
+            return 0;
+        }
+#endif
         if (argc == 2 && std::string_view(argv[1]) == "--copied-direct-only") {
             copiedDirectOrderingTests(device, recorder);
             return 0;

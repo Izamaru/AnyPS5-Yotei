@@ -325,6 +325,10 @@ def read_modules(directories):
     exports = defaultdict(set)
     for directory in directories:
         for file in directory_files(directory, "*"):
+            # Windows converted modules have PE exports; their imports are in
+            # the companion relinker registries supplied by the PC Lab.
+            if file.name.endswith(".prx.guest.prx"):
+                continue
             data = file.read_bytes()
             own = elf_imports(file, data)
             symbols, needed = own
@@ -332,6 +336,21 @@ def read_modules(directories):
             for name in elf_exports(file, data):
                 exports[name].add(file.name)
     return imports, {name: sorted(files) for name, files in exports.items()}
+
+
+def converted_module_exports(directories):
+    """Verify actual converted exports, never satisfying imports by filename."""
+    exports, images = {}, {}
+    for directory in directories:
+        for file in directory_files(directory, "*.prx.guest.prx"):
+            library = file.name.removesuffix(".guest.prx")
+            data = file.read_bytes()
+            fingerprint = hashlib.sha256(data).digest()
+            if library in images and images[library] != fingerprint:
+                raise AuditError(f"ambiguous converted guest library {library}")
+            images[library] = fingerprint
+            exports[library] = read_exports(file, data)
+    return exports
 
 
 def nid_of(name, aliases):
@@ -406,7 +425,8 @@ def classify(nid, library, providers, stubs, modules):
     return "implemented"
 
 
-def audit(imports, exports, stubs, libraries, modules, module_imports=None, module_exports=None):
+def audit(imports, exports, stubs, libraries, modules, module_imports=None, module_exports=None, guest_exports=None):
+    guest_exports = guest_exports or {}
     records = {}
     for nid, library in imports:
         record = records.setdefault((nid, library), {"nid": nid, "library": library, "references": 0})
@@ -420,7 +440,12 @@ def audit(imports, exports, stubs, libraries, modules, module_imports=None, modu
         providers = exports.get(nid, [])
         if library is None:
             providers = sorted(set(providers) | set((module_exports or {}).get(nid, [])))
-        kind = classify(nid, library, providers, stubs, modules)
+            providers = sorted(set(providers) | {name + ".guest.prx" for name, symbols in guest_exports.items() if nid in symbols})
+        if library and nid in guest_exports.get(library, set()):
+            kind = "module"
+            providers = [library + ".guest.prx"]
+        else:
+            kind = classify(nid, library, providers, stubs, modules)
         record["class"] = kind
         record["providers"] = providers
         record["library_mismatch"] = kind in ("implemented", "stub") and bool(library) and library not in providers and "libc.prx" not in providers
@@ -430,11 +455,11 @@ def audit(imports, exports, stubs, libraries, modules, module_imports=None, modu
     missing = defaultdict(int)
     for record in ordered:
         library = record["library"]
-        if library and library not in libraries and library not in modules:
+        if library and library not in libraries and library not in modules and library not in guest_exports:
             missing[library] += 1
     for _, needed in (module_imports or {}).values():
         for library in needed:
-            if library not in libraries and library not in modules:
+            if library not in libraries and library not in modules and library not in guest_exports:
                 missing[library] += 1
     return ordered, dict(sorted(missing.items()))
 
@@ -564,7 +589,8 @@ def main(argv=None):
         imports = [entry for _, entries in registries for entry in entries]
         exports, libraries = built_libraries(args.libs)
         module_imports, module_exports = read_modules(args.modules)
-        records, missing = audit(imports, exports, source_stubs(args.source), libraries, set(module_imports), module_imports, module_exports)
+        guests = converted_module_exports(args.modules)
+        records, missing = audit(imports, exports, source_stubs(args.source), libraries, set(module_imports), module_imports, module_exports, guests)
         if args.names:
             attach_names(records, load_names(args.names))
         summary = summarize(records, sum(record["references"] for record in records), missing)

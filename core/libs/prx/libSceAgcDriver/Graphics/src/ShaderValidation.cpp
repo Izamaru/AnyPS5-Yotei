@@ -4,6 +4,9 @@
 #include "prx/libSceAgcDriver/Graphics/include/VertexInput.hpp"
 #include <spirv/unified1/spirv.hpp>
 #include <algorithm>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <cstdio>
 #include <map>
 #include <optional>
@@ -151,7 +154,7 @@ struct Module {
     }
 };
 
-Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysicalDeviceSubgroupProperties& subgroup, bool fragmentShaderBarycentric, bool descriptorIndexing, bool imageInt64Atomics, bool geometryShader, bool sampleRateShading, bool bufferInt64Atomics, bool shaderClipDistance, bool shaderCullDistance, bool viewportIndexLayer) {
+Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysicalDeviceSubgroupProperties& subgroup, bool fragmentShaderBarycentric, bool descriptorIndexing, bool imageInt64Atomics, bool geometryShader, bool sampleRateShading, bool bufferInt64Atomics, bool shaderClipDistance, bool shaderCullDistance, bool viewportIndexLayer, bool runtimeDescriptorArray) {
     using Stage = ShaderRecompiler::ShaderStage;
     Require(compiled.program != nullptr, "missing compiled shader");
     const auto& shader = *compiled.program;
@@ -284,10 +287,11 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
                 // Bindless image tables index their slots non-uniformly in graphics stages
                 // (VK_EXT_descriptor_indexing, enabled by the device setup when available).
                 const bool isDescriptorIndexingCapability =
-                    descriptorIndexing &&
+                    (descriptorIndexing &&
                     (capability == spv::CapabilityShaderNonUniform ||
                      capability == spv::CapabilitySampledImageArrayNonUniformIndexing ||
-                     capability == spv::CapabilityStorageImageArrayNonUniformIndexing);
+                     capability == spv::CapabilityStorageImageArrayNonUniformIndexing)) ||
+                    (runtimeDescriptorArray && capability == spv::CapabilityRuntimeDescriptorArray);
 
                 Require(
                     isBaseCapability ||
@@ -328,7 +332,7 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
                     Require(fragment && fragmentShaderBarycentric, "SPV_KHR_fragment_shader_barycentric requires enabled fragmentShaderBarycentric in a fragment shader");
                     break;
                 }
-                Require(extension == "SPV_KHR_float_controls" || (imageInt64Atomics && extension == "SPV_EXT_shader_image_int64") || (viewportIndexLayer && extension == "SPV_EXT_shader_viewport_index_layer") || (mesh && (extension == "SPV_EXT_mesh_shader" || extension == "SPV_KHR_physical_storage_buffer")) || (descriptorIndexing && extension == "SPV_EXT_descriptor_indexing") || (shader.bdaAbiVersion == ShaderRecompiler::BdaAbi::Version && (extension == "SPV_KHR_physical_storage_buffer" || extension == "SPV_KHR_8bit_storage")), "unsupported SPIR-V extension");
+                Require(extension == "SPV_KHR_float_controls" || (imageInt64Atomics && extension == "SPV_EXT_shader_image_int64") || (viewportIndexLayer && extension == "SPV_EXT_shader_viewport_index_layer") || (mesh && (extension == "SPV_EXT_mesh_shader" || extension == "SPV_KHR_physical_storage_buffer")) || ((descriptorIndexing || runtimeDescriptorArray) && extension == "SPV_EXT_descriptor_indexing") || (shader.bdaAbiVersion == ShaderRecompiler::BdaAbi::Version && (extension == "SPV_KHR_physical_storage_buffer" || extension == "SPV_KHR_8bit_storage")), "unsupported SPIR-V extension");
                 break;
             }
             case spv::OpDecorateId:
@@ -533,10 +537,14 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
         } else if (variable.storage == spv::StorageClassUniformConstant) {
             Require(decoration.set && decoration.binding, "unbound shader resource");
             const auto key = std::make_pair(*decoration.set, *decoration.binding);
-            Require(descriptors.insert(key).second, "duplicate SPIR-V resource binding");
             const auto binding = std::find_if(shader.bindings.begin(), shader.bindings.end(), [&](const auto& item) { return item.descriptorSet == key.first && item.binding == key.second; });
+            Require(descriptors.insert(key).second || (binding != shader.bindings.end() && binding->role == ShaderRecompiler::DescriptorRole::ImageTable), "duplicate SPIR-V resource binding");
             Require(binding != shader.bindings.end(), "SPIR-V resource is absent from recompiler binding metadata");
             Require(binding->kind == ShaderRecompiler::DescriptorKind::Sampler || binding->kind == ShaderRecompiler::DescriptorKind::SampledImage || binding->kind == ShaderRecompiler::DescriptorKind::StorageImage, "SPIR-V descriptor type disagrees with recompiler binding metadata");
+            if (binding->role == ShaderRecompiler::DescriptorRole::ImageTable || binding->role == ShaderRecompiler::DescriptorRole::SamplerTable) {
+                Require(type.size() == 3 && (type[0] & 0xffffu) == spv::OpTypeRuntimeArray, "image table must be declared as a runtime descriptor array");
+                continue;
+            }
             Require(type.size() == 4 && (type[0] & 0xffffu) == spv::OpTypeArray, "typed heap must be declared as a descriptor array");
             const auto heap = static_cast<ShaderRecompiler::RuntimeAbi::Binding>(binding->binding % static_cast<std::uint32_t>(ShaderRecompiler::RuntimeAbi::Binding::Count));
             const auto capacity = ShaderRecompiler::RuntimeAbi::HeapCapacity(heap);
@@ -548,11 +556,11 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
             const auto binding = std::find_if(shader.bindings.begin(), shader.bindings.end(), [&](const auto& item) { return item.descriptorSet == key.first && item.binding == key.second; });
             const bool array = binding != shader.bindings.end() && binding->role == ShaderRecompiler::DescriptorRole::GuestBuffers;
             const auto [view, first] = bufferViews.emplace(key, decoration.aliased);
-            Require(descriptors.insert(key).second || (!first && view->second && decoration.aliased && array), "duplicate SPIR-V resource binding");
+            Require(descriptors.insert(key).second || (!first && view->second && decoration.aliased && array), "duplicate SPIR-V resource binding (set " + std::to_string(key.first) + ", binding " + std::to_string(key.second) + ", stage " + std::to_string(static_cast<unsigned>(stage)) + ")");
             Require(binding != shader.bindings.end(), "SPIR-V resource is absent from recompiler binding metadata");
             Require(binding->kind == ShaderRecompiler::DescriptorKind::StorageBuffer, "SPIR-V descriptor type disagrees with recompiler binding metadata");
             Require(!binding->readOnly, "read-only descriptor metadata is unsupported because the recompiler emits no NonWritable decoration");
-            Require(array || (shader.bdaAbiVersion == ShaderRecompiler::BdaAbi::Version && (binding->role == ShaderRecompiler::DescriptorRole::BdaPagetable || binding->role == ShaderRecompiler::DescriptorRole::FaultBuffer)) || binding->role == ShaderRecompiler::DescriptorRole::ShaderData || binding->role == ShaderRecompiler::DescriptorRole::FlattenedSrt || binding->role == ShaderRecompiler::DescriptorRole::Gds, "SPIR-V descriptor role is unsupported");
+            Require(array || (shader.bdaAbiVersion == ShaderRecompiler::BdaAbi::Version && (binding->role == ShaderRecompiler::DescriptorRole::BdaPagetable || binding->role == ShaderRecompiler::DescriptorRole::FaultBuffer)) || binding->role == ShaderRecompiler::DescriptorRole::ShaderData || binding->role == ShaderRecompiler::DescriptorRole::FlattenedSrt || binding->role == ShaderRecompiler::DescriptorRole::ImageTableMap || binding->role == ShaderRecompiler::DescriptorRole::Gds, "SPIR-V descriptor role is unsupported");
             auto blockId = typeId;
             if (array) {
                 Require(type.size() == 4 && (type[0] & 0xffffu) == spv::OpTypeArray, "guest buffer descriptors must be declared as a descriptor array");
@@ -568,7 +576,8 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
             Require(words.size() == 3 && (words[0] & 0xffffu) == spv::OpTypeRuntimeArray, "descriptor block member must be a runtime array");
             const auto& element = module.Type(words[2]);
             const bool unsignedInteger = element.size() == 4 && (element[0] & 0xffffu) == spv::OpTypeInt && element[3] == 0u;
-            Require(unsignedInteger && (element[2] == 32u || (array && decoration.aliased && element[2] == 64u)), "descriptor block member must be a runtime array of u32, or of u64 in an aliased guest buffer view");
+            Require(unsignedInteger && (element[2] == 32u || (array && decoration.aliased && bufferInt64Atomics && element[2] == 64u)), "descriptor block member must be a runtime array of u32, or of u64 in an aliased guest buffer view");
+            if (array) Require(module.decorations[words[1]].stride == (element[2] == 64u ? 8u : 4u), "descriptor buffer view has an invalid array stride");
             const auto member = module.offsets.find({blockId, 0});
             Require(member != module.offsets.end() && member->second == 0, "descriptor block member must have offset zero");
         }
@@ -594,7 +603,29 @@ Module Inspect(const CompiledShader& compiled, const State& state, const VkPhysi
 
 }
 
-std::set<std::uint32_t> ValidateShaders(std::span<const CompiledShader> shaders, const State& state, const VkPhysicalDeviceSubgroupProperties& subgroup, bool fragmentShaderBarycentric, bool descriptorIndexing, bool imageInt64Atomics, bool geometryShader, bool sampleRateShading, bool bufferInt64Atomics, bool shaderClipDistance, bool shaderCullDistance, bool viewportIndexLayer) {
+namespace {
+std::string DumpRejectedShader(const CompiledShader& shader, const char* reason) {
+    if (std::getenv("APS5_DUMP_SHADERS") == nullptr) return {};
+    try {
+        const auto* directory = std::getenv("APS5_SHADER_DUMP_DIR");
+        auto path = directory != nullptr && *directory != '\0' ? std::filesystem::u8path(directory) : std::filesystem::current_path();
+        path /= "graphics_validation_stage_" + std::to_string(static_cast<unsigned>(shader.stage)) + "_variant_" + std::to_string(shader.program->variantId) + ".spv";
+        std::ofstream binary(path, std::ios::binary | std::ios::trunc);
+        binary.write(reinterpret_cast<const char*>(shader.program->spirv.data()), static_cast<std::streamsize>(shader.program->spirv.size() * sizeof(std::uint32_t)));
+        binary.close();
+        if (!binary) return {};
+        std::ofstream metadata(path.string() + ".txt");
+        metadata << reason << '\n';
+        for (const auto& binding : shader.program->bindings) {
+            metadata << "set=" << binding.descriptorSet << " binding=" << binding.binding << " kind=" << static_cast<unsigned>(binding.kind)
+                     << " role=" << static_cast<unsigned>(binding.role) << " count=" << binding.count << '\n';
+        }
+        return path.string();
+    } catch (...) { return {}; }
+}
+}
+
+std::set<std::uint32_t> ValidateShaders(std::span<const CompiledShader> shaders, const State& state, const VkPhysicalDeviceSubgroupProperties& subgroup, bool fragmentShaderBarycentric, bool descriptorIndexing, bool imageInt64Atomics, bool geometryShader, bool sampleRateShading, bool bufferInt64Atomics, bool shaderClipDistance, bool shaderCullDistance, bool viewportIndexLayer, bool runtimeDescriptorArray) {
     using Stage = ShaderRecompiler::ShaderStage;
     const bool tessellation = state.stages.path == ShaderPath::Tessellation;
     const bool mesh = state.stages.path == ShaderPath::Geometry;
@@ -615,7 +646,14 @@ std::set<std::uint32_t> ValidateShaders(std::span<const CompiledShader> shaders,
         Require(shaders[i].program != nullptr, "missing compiled shader");
         Require(shaders[i].stage == expected, "graphics stage order disagrees");
         for (const auto& binding : shaders[i].program->bindings) Require(binding.descriptorSet == ShaderRecompiler::RuntimeAbi::DescriptorSet || (shaders[i].stage == ShaderRecompiler::ShaderStage::Fragment && binding.descriptorSet == ShaderRecompiler::RuntimeAbi::FragmentDescriptorSet), "graphics resource uses a descriptor set other than its stage's");
-        const auto current = Inspect(shaders[i], state, subgroup, fragmentShaderBarycentric, descriptorIndexing, imageInt64Atomics, geometryShader, sampleRateShading, bufferInt64Atomics, shaderClipDistance, shaderCullDistance, viewportIndexLayer);
+        Module current;
+        try {
+            current = Inspect(shaders[i], state, subgroup, fragmentShaderBarycentric, descriptorIndexing, imageInt64Atomics, geometryShader, sampleRateShading, bufferInt64Atomics, shaderClipDistance, shaderCullDistance, viewportIndexLayer, runtimeDescriptorArray);
+        } catch (const std::exception& error) {
+            const auto dump = DumpRejectedShader(shaders[i], error.what());
+            throw std::runtime_error(std::string(error.what()) + " [stage " + std::to_string(static_cast<unsigned>(shaders[i].stage)) +
+                ", variant " + std::to_string(shaders[i].program->variantId) + (dump.empty() ? "]" : ", capture " + dump + "]"));
+        }
         if (i != 0) {
             for (const auto& [location, signature] : current.inputs) {
                 const auto output = previous.outputs.find(location);

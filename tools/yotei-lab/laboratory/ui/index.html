@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark"><meta name="anyps5-session" content="__SESSION_TOKEN__">
+  <title>AnyPS5</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233e7ff1'/%3E%3Ctext x='7' y='24' fill='white' font-size='25' font-family='Arial'%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script>
+</head>
+<body>
+<div class="shell">
+  <header class="app-header"><strong>AnyPS5</strong><span id="release" class="muted">v0.1.2</span><span class="project-name">Ghost of Yōtei</span><button id="shutdown" class="button quiet">Encerrar painel</button></header>
+  <nav class="tabs" aria-label="Navegação principal">
+    <button data-page="inicio" class="nav active">Visão geral</button>
+    <button data-page="ajustes" class="nav">Ajustes</button>
+    <button data-page="manutencao" class="nav">Manutenção</button>
+    <button data-page="backups" class="nav">Backups</button>
+    <button data-page="atividade" class="nav">Atividade<span id="activity-dot"></span></button>
+  </nav>
+  <main>
+    <div id="connection-error" class="notice hidden" role="alert"></div>
+    <section id="page-inicio" class="page active">
+      <div class="page-heading"><h1>Execução</h1><span id="runtime-ready" class="status-pill">Verificando runtime…</span></div>
+      <div class="panel">
+        <dl class="config-summary"><div><dt>Perfil</dt><dd id="home-profile">Desempenho</dd></div><div><dt>Cache</dt><dd id="home-cache">2 GiB</dd></div><div><dt>CPU do runtime</dt><dd id="home-cpu">Intel</dd></div></dl>
+        <div class="actions"><button class="button primary" data-action="run">Jogar</button><button class="button" data-go="ajustes">Ajustar perfil</button></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span id="fps-label" class="muted">Último benchmark</span><div class="metric-value"><span id="fps-value">—</span><small>FPS</small></div><span id="fps-note" class="field-help">Teste anterior</span></div>
+        <div class="metric runtime-metric hidden"><span class="muted">RAM do processo</span><div class="metric-value"><span id="ram-value">—</span><small>GiB</small></div><span class="field-help">Última amostra</span></div>
+        <div class="metric runtime-metric hidden"><span class="muted">VRAM da placa</span><div class="metric-value"><span id="vram-value">—</span><small>GiB</small></div><span class="field-help">Inclui outros aplicativos</span></div>
+      </div>
+    </section>
+    <section id="page-ajustes" class="page">
+      <div class="page-heading"><h1>Ajustes de execução</h1><span id="save-status" class="muted">Salvo neste PC</span></div>
+      <div class="panel settings-panel">
+        <div class="field"><label class="field-label">Perfil</label><div class="segmented"><button data-profile="desempenho" class="selected">Desempenho</button><button data-profile="economico">Econômico</button></div></div>
+        <div class="field"><div class="control-heading"><label for="cache-slider">Cache de imagens</label><output id="cache-output" for="cache-slider">Estágio 2 · 2 GiB</output></div><input id="cache-slider" type="range" min="1" max="4" step="1" value="2" list="cache-stages" aria-valuetext="Estágio 2: 2 GiB"><datalist id="cache-stages"><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option></datalist><div class="range-labels stage-labels" id="cache-stage-labels"><span>1</span><span>2</span><span>3</span><span>4</span></div><p class="field-help">Orçamento de retenção dos caches; não reserva essa memória antecipadamente.</p></div>
+        <div class="field"><label class="checkbox"><input type="checkbox" id="capture-toggle">Capturar shaders</label><p class="field-help">Salva capturas adicionais nos logs para investigar erros.</p></div>
+        <div class="actions"><button class="button primary" data-action="run">Jogar com estes ajustes</button></div>
+      </div>
+    </section>
+    <section id="page-manutencao" class="page">
+      <div class="page-heading"><h1>Manutenção</h1></div>
+      <div class="panel"><h2>Verificação</h2><div class="actions"><button class="button" data-action="status">Verificar ambiente</button><button class="button" data-action="audit">Auditar bibliotecas</button><button class="button" data-action="check-updates">Verificar atualizações</button></div><p class="field-help">Consultar atualizações não altera a instalação.</p></div>
+      <div class="panel"><h2>Preparação e compilação</h2><p class="field-help">Feche o jogo antes de compilar ou converter.</p><div class="build-controls"><div class="field"><div class="control-heading"><label for="jobs-slider">Processos de compilação</label><output id="jobs-output">4</output></div><input id="jobs-slider" type="range" min="1" max="8" step="1" value="4"><div class="range-labels"><span>1</span><span>8</span></div></div><div class="field"><label class="field-label">CPU para conversão</label><div class="segmented"><button data-cpu="intel" class="selected">Intel</button><button data-cpu="amd">AMD</button></div></div></div><div class="actions"><button class="button" data-action="setup">Preparar ferramentas</button><button class="button" data-action="build">Compilar e testar runtime</button><button class="button" data-action="build-relinker">Compilar conversor</button><button class="button" data-action="relink">Converter para a CPU escolhida</button><button class="button" data-action="apply-lab-update">Aplicar correções locais</button></div></div>
+    </section>
+    <section id="page-backups" class="page">
+      <div class="page-heading"><h1>Backups</h1><button class="button" data-action="backup">Novo backup</button></div>
+      <p class="backup-summary"><span id="backup-count">Carregando cópias…</span><span class="field-help">Retenção automática: últimas 5 cópias.</span></p>
+      <div class="table-panel"><table><thead><tr><th>Criado em</th><th>Versão</th><th>Motivo</th><th>Tamanho</th><th>Restauração</th></tr></thead><tbody id="backup-rows"></tbody></table><div id="backup-empty" class="empty hidden">Nenhum backup completo disponível.</div></div>
+      <div class="panel restore-panel"><div><p id="rollback-description">Consultando retorno disponível…</p><p class="field-help">Cópias removidas deixam de estar disponíveis para retorno.</p></div><button id="rollback-button" class="button" data-action="rollback">Restaurar versão anterior</button></div>
+    </section>
+    <section id="page-atividade" class="page">
+      <div class="page-heading"><h1>Atividade</h1><button id="copy-log" class="button">Copiar mensagens</button></div>
+      <div class="log-panel"><div class="log-top"><span id="log-title">Sem operações</span><span id="log-path"></span></div><pre id="log-output" role="log" aria-live="off">Sem mensagens.</pre></div>
+    </section>
+    <div id="job-bar" class="job-bar hidden" role="status"><div id="job-indicator" class="spinner"></div><div class="job-copy"><strong id="job-title">Preparando…</strong><span id="job-message"></span></div><button class="button small" data-go="atividade">Ver atividade</button><button id="stop-test" class="button danger small hidden">Encerrar teste</button></div>
+  </main>
+  <footer><span>PC Lab <span id="lab-version">0.4.0</span></span><span id="revision">Windows x64</span></footer>
+</div><div id="toast" class="toast hidden" role="status"></div>
+</body></html>

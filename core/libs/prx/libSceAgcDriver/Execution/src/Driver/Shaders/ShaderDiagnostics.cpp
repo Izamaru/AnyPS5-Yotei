@@ -1,6 +1,9 @@
 #include "prx/libSceAgcDriver/Execution/include/Driver/Driver.hpp"
 #include "ControlFlow/RequestSerializer.hpp"
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <stdexcept>
 #include <functional>
 #include <string_view>
 
@@ -49,23 +52,28 @@ void Driver::reportSkip(const char* kind, const std::string& what) {
     if (!line.empty()) std::fwrite(line.data(), 1, line.size(), stderr);
 }
 
-std::string Driver::dumpRequest(std::uint64_t address, const ShaderRecompiler::RecompileRequest& request) {
+std::string Driver::dumpRequest(std::uint64_t address, const ShaderRecompiler::RecompileRequest& request, bool registration) {
     static std::mutex dumpMutex;
-    static std::set<std::uint64_t> dumped;
-    char name[64];
-    std::snprintf(name, sizeof(name), "shader_%llx.req", static_cast<unsigned long long>(address));
+    static std::set<std::pair<std::uint64_t, bool>> dumped;
+    char name[96];
+    std::snprintf(name, sizeof(name), "shader_%llx%s.req", static_cast<unsigned long long>(address), registration ? "_registration" : "");
+    std::filesystem::path path(name);
+    if (const auto* directory = std::getenv("APS5_SHADER_DUMP_DIR"); directory != nullptr && *directory != '\0') path = std::filesystem::u8path(directory) / path;
     std::lock_guard lock(dumpMutex);
-    if (!dumped.insert(address).second) return name;
+    const auto key = std::pair{address, registration};
+    if (dumped.contains(key)) return path.string();
     try {
         const auto text = ShaderRecompiler::RequestSerializer{}.Serialize(request);
-        if (std::FILE* file = std::fopen(name, "wb")) {
-            std::fwrite(text.data(), 1, text.size(), file);
-            std::fclose(file);
-        }
+        std::ofstream file(path, std::ios::binary | std::ios::trunc);
+        file.write(text.data(), static_cast<std::streamsize>(text.size()));
+        file.close();
+        if (!file) throw std::runtime_error("could not write shader capture");
+        dumped.insert(key);
     } catch (const std::exception& error) {
         std::fprintf(stderr, "[gpu] could not serialize request for 0x%llx: %s\n", static_cast<unsigned long long>(address), error.what());
+        return {};
     }
-    return name;
+    return path.string();
 }
 
 }

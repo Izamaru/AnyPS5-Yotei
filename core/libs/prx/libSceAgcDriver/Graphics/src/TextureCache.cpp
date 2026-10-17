@@ -1,13 +1,14 @@
 #include "prx/libSceAgcDriver/Graphics/include/TextureCache.hpp"
 #include "prx/libSceAgcDriver/Graphics/include/TextureTiling.hpp"
 #include "prx/libSceAgcDriver/Execution/include/GuestMemory.hpp"
+#include "prx/libSceAgcDriver/Graphics/include/ResourceBudget.hpp"
 #include <algorithm>
 #include <cstring>
 #include <limits>
 
 namespace AgcDriver::Graphics {
 
-TextureCache::TextureCache(const Context& context) : context(context) {
+TextureCache::TextureCache(const Context& context) : context(context), budget(ResourceBudget("APS5_LOCAL_TEXTURE_CACHE_MIB", 256ull << 20u)) {
     Require(context.detiler != nullptr, "texture cache requires a device detiler");
 }
 

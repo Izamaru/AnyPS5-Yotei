@@ -1,0 +1,695 @@
+{
+  "schema": 1,
+  "purpose": "validated-laboratory-source-snapshot",
+  "base_revision": "a48c00660eae7afd204fdb7513a52380dddf5a04",
+  "native_modifications": 93,
+  "applied_prs": [
+    6492,
+    6670
+  ],
+  "gameplay_verified": false,
+  "files": [
+    {
+      "path": "core/libs/prx/libSceAgcDriver/CMakeLists.txt",
+      "sha256": "16eaed634815187016efce79c88123e6c578ad424f9639a431803c93c3155c24",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/CMakeLists.txt",
+      "before_sha256": "fcc38075eafe3cc489b254abe8f883dc3651810c853633624deffc0c87215e6a"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/include/Driver/Driver.hpp",
+      "sha256": "4fb5c519b60f191b59c5c156180c07a713b83a554b50bacebffa6d5f2fa446f9",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/include/Driver/Driver.hpp",
+      "before_sha256": "9b22b6d2bd7882b97e97d72c98fc6f75e3416eb4af0419d15165b2a94afc6167"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/include/GuestMemory.hpp",
+      "sha256": "ea342aa854bf4cce4b2c9330315b82474e38593a64adce77f20b150f2bac2903",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/include/GuestMemory.hpp",
+      "before_sha256": "529b901abdea1c81f20bf096f527d996f3ecfba05e1f8f16941e55bd92ccebaa"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/include/ShaderMemory.hpp",
+      "sha256": "edbf8d9132056691bfbb1cdc3264aad4156cb869608a6feb806861f04cefb0a2",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/include/ShaderMemory.hpp",
+      "before_sha256": "c2e7ed85e97dd5f9e80419059282255b63de02debab2483886cb946886d90022"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Dispatch/DispatchCache.cpp",
+      "sha256": "307981810121e0367b98d569544fb65e5f0ac5f7fca3a0365318395d66dffab0",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Dispatch/DispatchCache.cpp",
+      "before_sha256": "04393876762df822ba68cf53f00a35efed87ed137d5afb45f04d17262cdf3fe9"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Dispatch/DispatchInsert.cpp",
+      "sha256": "f3040ceecf51dcfd706b1f692e0650441c7431d3b5575b33e08ffbf62fa3de2e",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Dispatch/DispatchInsert.cpp",
+      "before_sha256": "e7c9e209bd8a28aae32d3ecf593f1456fbfd35bab615659c9244297766007c8d"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Shaders/ShaderDiagnostics.cpp",
+      "sha256": "05a596b5c8758086a4f4388afeab2c1e5753baa5515285dbdc785c66cf0d5341",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Shaders/ShaderDiagnostics.cpp",
+      "before_sha256": "b00483f0529d42257b1105335c13cfe088a5bd956435ef12e4f27d4ace7826d9"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Shaders/ShaderRegistry.cpp",
+      "sha256": "387712a918c6d93f03d0688041df8e988db62d18791db7955e8abb2bf26324ce",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/Driver/Shaders/ShaderRegistry.cpp",
+      "before_sha256": "e8503e3680417ac33537d60b1ff3872b5defd0c9e04b1457ae355fe7dc892ca1"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/GuestMemory.cpp",
+      "sha256": "00ba2b8a789a6ea8297fe6da5a801fa4699545bd83fc8b568fe22c29f9869f48",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/GuestMemory.cpp",
+      "before_sha256": "d8af84e676c6dbfcbf34f70fc5761b81c7124d31685e4497a93eb3963ba41a3e"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/ShaderDeviceProfile.cpp",
+      "sha256": "e0b6046a1e6580f4b25e648f0257d0cb5880223a22f551e7a2eb50e1370fbee4",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/ShaderDeviceProfile.cpp",
+      "before_sha256": "bd526b67d117b054e56bf78b3a36d2ff3f6fbe6399fd70933e650424b7fed086"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/ShaderMemory.cpp",
+      "sha256": "298ba9b356399baf5cc8aab4fb952b9310d49c46b7477b9a7443fca994ec8568",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/ShaderMemory.cpp",
+      "before_sha256": "7a7a9ae8277e5cf15b0a51dc12fd480ee91b0b16f0e809c753f023542b5ff0e7"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Execution/src/VulkanDevice.cpp",
+      "sha256": "1a64236db9adf3e39a4f1c0a1d59d77fe5762232698a2b8f539106f55cd89cec",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Execution/src/VulkanDevice.cpp",
+      "before_sha256": "8697e941991dff1a3b569d6828790b8b615a0737abecc7766654b80e92661786"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/BdaResources.hpp",
+      "sha256": "ba32ea0c930e34ddf4914d89b384d22ce764b5b44174de9ef2349155deaee137",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/BdaResources.hpp",
+      "before_sha256": "134c77aea5c7fb8c59a1041e5305688ba5317950a2046e9ef00762af17faf89f"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/Context.hpp",
+      "sha256": "1068606b6ae56efd7bd4f6a999ade01d58de594e5ae8ecfaf109bbc5fa1232ce",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/Context.hpp",
+      "before_sha256": "e6edd9949dff18899ee89c16c4476ae9aa8465638322347289c8542a2b72c0a4"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/DepthSurface.hpp",
+      "sha256": "44e1989ed566b9a6447aad6b47b56d9abf70b5a963667d3586aeb48b70c9ee89",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/DepthSurface.hpp",
+      "before_sha256": "476c88ee96a85bc881a688bee76989917624908698216df9dcc63314cdb43a53"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/GuestBufferMemory.hpp",
+      "sha256": "e5c4c5d0efbee1dc919fd2beeda31bc246416297cb4be39e24e8c32e324c762e",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/GuestBufferMemory.hpp",
+      "before_sha256": "f71253ded50c2caf8de9dc5109f4063fabebc2cab757ce527111b4eb96729fd6"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/Pipeline.hpp",
+      "sha256": "832d44a5027e023df3dca4d4f40c3525cf271737b4d5cb834cbf2aa2b7f91163",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/Pipeline.hpp",
+      "before_sha256": "7a2710e5a508c9c08eb4e19addf3084bca726748eca3b04922ccfb6ad3df101b"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/ResourceBudget.hpp",
+      "sha256": "0367106a21af9584fc2ae7de69ffc699a9bd58eed40ade2c8d6d6598fefc40eb",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/ResourceBudget.hpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/Sampler.hpp",
+      "sha256": "741eb1b220dea0b01579509832eacec60ed39a007fd7d25646ca3b6fed73a27e",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/Sampler.hpp",
+      "before_sha256": "b38b76a9e5ab1d7c4a49f35829c49e46944c14352ac59d6378aeb562f6132434"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/ShaderResources.hpp",
+      "sha256": "a0c0abbfb6ed75e73ef05c9632712c4f7a9b221dbfbf15e35e449f69632cca34",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/ShaderResources.hpp",
+      "before_sha256": "954ec865233a6a616bc5cff0507cfd9c9bd2d019b2db80e9654c890f6724e0a3"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/Texture.hpp",
+      "sha256": "eb0eed75e8a0b1225006bbe2b9aa046f7b048fa8ba9a7f63fc037f59d2788f3e",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/Texture.hpp",
+      "before_sha256": "3de433782a7d9fef3cfe834270c82d8b1cc31b67de1c0a385b53cc7415a9346f"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/include/TextureCache.hpp",
+      "sha256": "bb665e79ff58ad14927b772016c738baf768627c520275785ba993d5c26d9434",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/include/TextureCache.hpp",
+      "before_sha256": "3c1ee03d0be83e80b5ba71c3e17feb15b537643019bede8b32caadc30bf09e50"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/BdaResources.cpp",
+      "sha256": "20082920181c5f1a9c2cb1633b6ccfeec817cbfc65289475955bfbc63f939815",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/BdaResources.cpp",
+      "before_sha256": "aaf3b1319592d63897ecc2fa2acb41621f8f689331044ae0154a3f80012ef84a"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/BufferPool.cpp",
+      "sha256": "ff29dac634cfb3b9ccad978807aeccab134850a9bdfc458416a8b024c6c6eccc",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/BufferPool.cpp",
+      "before_sha256": "e0fbedd0bece945ed3dc7cf01cd5f272a378eabe02fb801d40e44a1e909a54bb"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/DepthSurface.cpp",
+      "sha256": "d0315fb21e1e7cca5cf8adeaafd389499da9c1185e9bb5564112853a67cbe4d1",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/DepthSurface.cpp",
+      "before_sha256": "a42e2c6a69257faebcedefe3bbfc9d214e46dfc7bb9860766e0aa9054cea6a44"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/Draw.cpp",
+      "sha256": "03ceae1bc02722c5a190e7136b69b20f7808f8cd15d068d54cb63b9a6b8e3e3b",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/Draw.cpp",
+      "before_sha256": "33f09688f38ed85a7870861b770afff624ef2b24d6a77e6ddeec2923ae05c1dd"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/GuestBufferMemory.cpp",
+      "sha256": "a37d77c658012cc58b1a4fd1ea9f91803f0a39289c2349ae4ae13f476f9d39be",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/GuestBufferMemory.cpp",
+      "before_sha256": "651497c802fafc339458fb20fbc119b13316894530c89dacad51670ea6f13b56"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/GuestSamplerResource.cpp",
+      "sha256": "b8baf5e34bcd8ef2f36876c81e3e0b28d09284663f8d0e617d0f60a17c56b153",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/GuestSamplerResource.cpp",
+      "before_sha256": "c53518e1852a989fbf9a2899326d8ea9c7aee4b7ee3dce054a8dd00acdcb2a76"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/Sampler.cpp",
+      "sha256": "30c6985f3524f02b4f9a7206fdf1940708d474fb2d174268f77f82dc8023afbe",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/Sampler.cpp",
+      "before_sha256": "194bb2c190cc1cf210b64612c3e7135d74b4d36f2b30598ad6747e2657e50289"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderAddressResources.cpp",
+      "sha256": "094e3ec5952ccf7e8fffb213c3579af32338ef3089feed9e8155a1b1f5cdd027",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderAddressResources.cpp",
+      "before_sha256": "9a6550c908b168f38be622770126f8a69d0df63ea0e080ac75132001424ee0cb"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderResources.cpp",
+      "sha256": "06894ff98e090a988ce769323b6d3e9957bc7638c0debcc6676f882a76811ec3",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderResources.cpp",
+      "before_sha256": "859f60d986aa1b7790439bf59019968be0d4fa999f3ff5286dfb72164100cf69"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderValidation.cpp",
+      "sha256": "cdd3befeeee9c7292f487ea984fd079ec733e6e3a9d01eedf4d2eb11f85bf8ae",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/ShaderValidation.cpp",
+      "before_sha256": "59aa366b69a64800389015dbcf8d9f8cdaf97f5b6b5d3d2b9ba7cebf4437fcf3"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/Graphics/src/TextureCache.cpp",
+      "sha256": "15b3d5e73f75c7e08287f707c66e97c4115740249ab7646d9889b69928a12615",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/Graphics/src/TextureCache.cpp",
+      "before_sha256": "48731d2648eafdc5d2eacdb2bbabf118223f7f979dfa2b24fc26f08cb642e7b1"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/BdaResources.cpp",
+      "sha256": "bcfb894dcfa40b75749bf4dca182033d1c016aee8bc50cdcadce9d55173da9fa",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/BdaResources.cpp",
+      "before_sha256": "ffeaf0300dd0a7d5841e5d81cd5d1adea118d371337ebbf0292c3e46fd12967f"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/Graphics.cpp",
+      "sha256": "f34994f047ff0c8ce8063897b3ad3e590d114f1ae0e2be3ab7339a941c84b169",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/Graphics.cpp",
+      "before_sha256": "b21858c8db6764d2e6653c9cf5f022c6abc95966c06c2b94b81943452039e2c9"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/IrReclaim.cpp",
+      "sha256": "6114fb6dcf26abbbd0ccfbe857f2d3b228c783c32c862d5830f62b96e4089710",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/IrReclaim.cpp",
+      "before_sha256": "c88cf34356423858f24e6a3524b185aee8ad64219b60c8087dd1af4543f27435"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/Recorder.cpp",
+      "sha256": "c91b72a98ca265c3e6b574066cb94693c735ec16351a21a51870dd5d87ace7ca",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/Recorder.cpp",
+      "before_sha256": "dcb897579079314fe8b6607b2e581245d63023263275065f9f6e4645c3bd4b46"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/ShaderDeviceProfile.cpp",
+      "sha256": "e2733026d26ee9ce9c434665de6d6a60dccad35c61c655a77fad5abd2ee47bd7",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/ShaderDeviceProfile.cpp",
+      "before_sha256": "f2b0098a7588f4da7c4e80b016cba5361d06abe5f42ce7b6a4eb9f9d587c6969"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/ShaderDiskCache.cpp",
+      "sha256": "b82a04e8db85ba18d67a5abe854a0188a855fc23d3e255f43365c7640d00042f",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/ShaderDiskCache.cpp",
+      "before_sha256": "9a31f3a712e2b81b729ff32b0cb2e3ee0e4cd10e70263405312f02782c8f0b66"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/ShaderMemory.cpp",
+      "sha256": "b238c5a4813263f9fb52c599bf6020d41ed9b9a406242448e92d6837aa1da340",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/ShaderMemory.cpp",
+      "before_sha256": "cf43b57964df95712f09cdd7d341291ea2bd256f8a791f1c3f5aeeaf4886567b"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/SpirvLdsAtomicLock.cpp",
+      "sha256": "689c673b7d407a0e0a9d2bb383e41d25553c4f2e175eb274e4eb78d82fa829fb",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/SpirvLdsAtomicLock.cpp",
+      "before_sha256": "e9808ef92bc7fdcb036f29e731968dcf2d60b5b71167c0628c971502cc554743"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/BindlessImages.cpp",
+      "sha256": "d76cc9d1e70c94389f6184b5897246e7b241d92587cb2a3669b0a74709508fbb",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/BindlessImages.cpp",
+      "before_sha256": "8072be60047a7ade1390a0eaef495e8f879c12553ebfcf8dfb000ecb84c48cd6"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageSampleUnnormalized.cpp",
+      "sha256": "60471e0dcb9a2c8e7b1e2269f1b97893ac8c1d31a7cf98fbabdbd37b6bfb4d1d",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageSampleUnnormalized.cpp",
+      "before_sha256": "da66fc824fad906a3152fc88d1101d08602404ba72e4e95d567b58e239dba4d7"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTable.cpp",
+      "sha256": "83bc4656e6df0de6eaf90d5154d658626ac5f5522c88cca3744005226068ce3e",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTable.cpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableCache.cpp",
+      "sha256": "22dbf5a20c327e625e8a886993cce95bde67bb3f9c7cccd5a5dc398a9da80eb2",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableCache.cpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableCacheBounds.cpp",
+      "sha256": "e6eb877cf2ea8c9ddeef7af798bc9d36e7006c3ec068f92ff5d316167b4c5789",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableCacheBounds.cpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableReuse.cpp",
+      "sha256": "2b2f61aaea6269645c97b9c71ccc32492f8d3901fef2e77abe45dee3abd2362f",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/ImageTableReuse.cpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/PreparedShaders.cpp",
+      "sha256": "7da3ff02d045036b567d0faf606b7b5f2fea744f284b8f2011172a3ad470ab45",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/PreparedShaders.cpp",
+      "before_sha256": "b6eb0d2600b616e6843f04a481a7cc04d36e8492dd1894941635358ad4da6d70"
+    },
+    {
+      "path": "core/libs/prx/libSceAgcDriver/tests/execution/SampledCacheBudget.cpp",
+      "sha256": "92f9f7a97d5662e4b2f073cacbd990914a70428f3b24418ca513ee09c675451a",
+      "upstream_path": "core/libs/prx/libSceAgcDriver/tests/execution/SampledCacheBudget.cpp",
+      "before_sha256": "5cb7074729dd3d0ae6c6f601f4dd5a4e73f12d8f740f54e949e596b20c5f3aaf"
+    },
+    {
+      "path": "core/libs/prx/libkernel/Apr/src/Apr.cpp",
+      "sha256": "e0163f53bea1b01449107d40643fc6e55fd5d3070d6a034a70c601dadec35f75",
+      "upstream_path": "core/libs/prx/libkernel/Apr/src/Apr.cpp",
+      "before_sha256": "ffcf042103a18f586120bb801c94c1286f6df97156ea6f6267ec092ac9555461"
+    },
+    {
+      "path": "core/libs/prx/libkernel/DirectMemory/DirectMemory.cpp",
+      "sha256": "0d34f95803fa24b7e934e85d2a007743b579b3b5a7faffb0404120352839e8c8",
+      "upstream_path": "core/libs/prx/libkernel/DirectMemory/DirectMemory.cpp",
+      "before_sha256": "15940b986df3a0935dce7dbceb9feab8628ace102980b3e2f29e0b81340671e1"
+    },
+    {
+      "path": "core/shader/recompiler/BdaAbi.hpp",
+      "sha256": "b8e89d11fa0c907a0e893049169c713036a265ab6f5e4988c6e59e4cb02f2559",
+      "upstream_path": "core/shader/recompiler/BdaAbi.hpp",
+      "before_sha256": "3c90a62ebb6ec311196c857967060ee56a16eb451b24d27d5409bc0842f43e8c"
+    },
+    {
+      "path": "core/shader/recompiler/CMakeLists.txt",
+      "sha256": "99a0556251736e4f2bb951d114e4613e2a6c9af591a881c33cdcb5972cea3eed",
+      "upstream_path": "core/shader/recompiler/CMakeLists.txt",
+      "before_sha256": "29f19b9adc36122057101bb1321c38ed88aa01fdb80c9c679ad72130c9257f8f"
+    },
+    {
+      "path": "core/shader/recompiler/ImageTableAbi.hpp",
+      "sha256": "1aad7368faf35e68562e48dd6dda923f686a6ff3f2f0b52cf83325d96997c07d",
+      "upstream_path": "core/shader/recompiler/ImageTableAbi.hpp",
+      "before_sha256": null
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/ControlFlowInfo.hpp",
+      "sha256": "afd7c93b195c936a5aeee4e9fe37fef32d013f78a3156b35102bd8310c97248f",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/ControlFlowInfo.hpp",
+      "before_sha256": "f1270c458dc7940bbc02d5b9fb405c88d226c88062f40c4a9a6600d28b62aa48"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/ResourcePlan.hpp",
+      "sha256": "e2866907c6705e0d70c4153f3fd548dec206304404f373f6219caa9a498a2e6b",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/ResourcePlan.hpp",
+      "before_sha256": "9fed5569fed9f8f824791861ce144eecf7ca0d5fa49d5f0c316961c6bab1e270"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/Resources.hpp",
+      "sha256": "eb47a9928ca95e44d05b98939421098fe708ef48bca1553c59e41d18562de6a5",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrMetadata/Resources.hpp",
+      "before_sha256": "9109d9904310e68d9c7c6fbc441c792ec56c9a896619d92cc79a1c90b2cdfa78"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrValue.hpp",
+      "sha256": "9150ac1cdf9bdd120da7515381f950af7112f9e3e8c3b0619d7b0847e6a7615f",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/include/IntermediateRepresentation/IrValue.hpp",
+      "before_sha256": "5c171dbd9b2b5ad26d4d9828f251a2c168b71ca19968627a3281b4de3b6684ce"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/src/IrOpcode.cpp",
+      "sha256": "379c5377431e5626d3fcdd6fda66d55ec508d53a9faeb36f63b6bd35758894f8",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/src/IrOpcode.cpp",
+      "before_sha256": "81e84d4dd555fa2caa73275624db52565e26f766c04aa91e7940d8c21003b902"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/src/IrProgram.cpp",
+      "sha256": "bda40eea137f9b83a62655ec420957a9376d51b70af9371ee62d6fe99bee633e",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/src/IrProgram.cpp",
+      "before_sha256": "5aee76872ea6051d4726d2a891cdf56f92ab6ed49d8e123f19c49f485afccabd"
+    },
+    {
+      "path": "core/shader/recompiler/IntermediateRepresentation/src/IrValue.cpp",
+      "sha256": "74b1b06e01fecb9c1361b099bfd9324d31688b979ca29ea7832ddad8223f93de",
+      "upstream_path": "core/shader/recompiler/IntermediateRepresentation/src/IrValue.cpp",
+      "before_sha256": "8beea0149c1d2a8c72cf0a66804cddc8d990582f398f5b1c3be4a6a081ea8731"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/include/Optimization/DescriptorBindingBuilder.hpp",
+      "sha256": "3ca669eac128525b092657c4d155237627b2ae5d2183fdbc3e9badfbf367a5f5",
+      "upstream_path": "core/shader/recompiler/Optimization/include/Optimization/DescriptorBindingBuilder.hpp",
+      "before_sha256": "89d6cce871c7cd5b9c76dae675aacc382dd16ecccd0348069432fd6cb0b1b927"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/include/Optimization/ResourceMaterializer.hpp",
+      "sha256": "dbfe30ccb445ad25b78b4f8d7c5e4b6d4b09e143e72ca48f3d65da5185434272",
+      "upstream_path": "core/shader/recompiler/Optimization/include/Optimization/ResourceMaterializer.hpp",
+      "before_sha256": "f1671b08e2d39adb39de0c38e87eb4cdbf12a649d065be023c8bcd856f526a10"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker.hpp",
+      "sha256": "23680c2f6cd34f046c26e0422220b6132bec9a49a3223ce240784ccd39282117",
+      "upstream_path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker.hpp",
+      "before_sha256": "cc1bcaca91c4503d62b4b48a8f01cddceeeabc687b3ba1a74ec7970a13b067f9"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker/SrtEvaluator.hpp",
+      "sha256": "cf48760ebb8a8fb4737ab2a7e3c309c2a7ef2cd5c00a7c502bea146ae12d6cc6",
+      "upstream_path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker/SrtEvaluator.hpp",
+      "before_sha256": "4c35a8b90dca27de6a6b883a1bf48a391020b36e26492e15831f31d7cc6b85c6"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker/SrtPlanBuilder.hpp",
+      "sha256": "1e1703c7f6f9e7fb6b9328eb2658ad04d6a47839ca8711c22b0120ffefca0240",
+      "upstream_path": "core/shader/recompiler/Optimization/include/Optimization/SrtWalker/SrtPlanBuilder.hpp",
+      "before_sha256": "9c871a3224380489c7632b1e963d7b48fd7bf52ecdf560f2f877e2917cb3a0a7"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/BindingAllocator.cpp",
+      "sha256": "84fdf94b0b06720bf6724159d2250e0e5113bfe2980b698247bdcf8be9549b03",
+      "upstream_path": "core/shader/recompiler/Optimization/src/BindingAllocator.cpp",
+      "before_sha256": "1e10bacce61a47a69a80e23857c5d5a7d224c897825e1cd49ded9ba2a12fb6c4"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/DescriptorBindingBuilder.cpp",
+      "sha256": "3fd502dcfc5ae43e7c245bafcd1c1aa9ddff7c8cdb735173c7037f009ff9fbc2",
+      "upstream_path": "core/shader/recompiler/Optimization/src/DescriptorBindingBuilder.cpp",
+      "before_sha256": "10651ee390593f4208b7d1bcea0654474124d73a02d5b8c50d91e5eaa5b59b2a"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/ResourceMaterializer.cpp",
+      "sha256": "af86c45acdde3c9f0621cae3dcf06c41ed8d9ebbfd296237dc975ee06ab61a3a",
+      "upstream_path": "core/shader/recompiler/Optimization/src/ResourceMaterializer.cpp",
+      "before_sha256": "3d2ba53fc54aae01245d1b90900ea628ce151e395d9c7b93aabd95b6cc05bf73"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/ResourceTracker.cpp",
+      "sha256": "81fddecfea73ac7f014bf33de50d9cc3020e4615730e266505f7e8f5aa26be6d",
+      "upstream_path": "core/shader/recompiler/Optimization/src/ResourceTracker.cpp",
+      "before_sha256": "ef83bb8d431b2abe1d798cd46114df57ce05254278e412ffe4aa88e69fba0a5f"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtEvaluator.cpp",
+      "sha256": "f4b3cbfd9f8c224d53c1173f06a17b45f6d8350884ce7f936a3447299af6b5e6",
+      "upstream_path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtEvaluator.cpp",
+      "before_sha256": "ce4624834a959fb3d01680f12d738acc94f5d6835c760a97788d8e7652626df5"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtFlatSlotClasses.cpp",
+      "sha256": "d226a58a07ac9e4cc74cc5445ec3bfad076d53979d3b377a0ef4e86dd2909987",
+      "upstream_path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtFlatSlotClasses.cpp",
+      "before_sha256": "803996cd06a0af718b3e7348335f4e4c4ba447d75823be53e8dbf1eba70a087e"
+    },
+    {
+      "path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtPlanBuilder.cpp",
+      "sha256": "45800985010515b21c140f902cdfb9c68eb8ee7aa0685b167edad040d508cee3",
+      "upstream_path": "core/shader/recompiler/Optimization/src/SrtWalker/SrtPlanBuilder.cpp",
+      "before_sha256": "5b454f527b524655f7d99709d909e856f473f54713b3c81817dbea32b5fdcb30"
+    },
+    {
+      "path": "core/shader/recompiler/PipelineSpecialization.hpp",
+      "sha256": "995e2a15cee05afe05b9ed592ba64d890967d98e39e39f568eccd688fc71b752",
+      "upstream_path": "core/shader/recompiler/PipelineSpecialization.hpp",
+      "before_sha256": "16ecffeca6d84d4c1bebdc95dd39c98c13f2fdaa10c1ab145cb929b2bee11632"
+    },
+    {
+      "path": "core/shader/recompiler/Recompiler.cpp",
+      "sha256": "e7f6d50cf3a575fd6731c00530c60e40c84abb0235dad2d976d65e00c956e74b",
+      "upstream_path": "core/shader/recompiler/Recompiler.cpp",
+      "before_sha256": "1923dcef7b9cc7e728f1584f099a3b8d239a246e1ca44a0c527454033f7b28dd"
+    },
+    {
+      "path": "core/shader/recompiler/Recompiler.hpp",
+      "sha256": "7695bb0b6ebfbb5e88346398059ca14b58c10e6835da309b5131e08a6a955116",
+      "upstream_path": "core/shader/recompiler/Recompiler.hpp",
+      "before_sha256": "b2b0113562aa30ad451d8d612a913a2c114648d68ad088f15a73ad5c08dd04ab"
+    },
+    {
+      "path": "core/shader/recompiler/RuntimeAbi.hpp",
+      "sha256": "10cb62475d1cfb2254822abe5cbb8b35bc2e9ce9cc4b2fd8c791e935d3a20f90",
+      "upstream_path": "core/shader/recompiler/RuntimeAbi.hpp",
+      "before_sha256": "f5ca5b2e78b81a983d6445ae5e5076e50328f859bed2c48296595123156e7bde"
+    },
+    {
+      "path": "core/shader/recompiler/ShaderDiskCache.cpp",
+      "sha256": "9ec7b07d828b979001173fd07e0967c80cbb3e1239bb776c4cc7d02175a850c6",
+      "upstream_path": "core/shader/recompiler/ShaderDiskCache.cpp",
+      "before_sha256": "e4ef59042cb09acf0e29f2c6109717c1d3361c8567889d595553e7b8d251c056"
+    },
+    {
+      "path": "core/shader/recompiler/ShaderDiskCache.hpp",
+      "sha256": "49537f98f93441c436eeea324f80d2dfaffafaafd652ac44628e832aa418d81c",
+      "upstream_path": "core/shader/recompiler/ShaderDiskCache.hpp",
+      "before_sha256": "b5808f0bb6b33a90ac6bfe6990e67c6d7133b68269074f84bff310a526972c64"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvEmitterHelpers.hpp",
+      "sha256": "c8f5a619d29ce7cedfd77e0e7b47cea066a1bba685f52a074aa3de9cfeeb43d0",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvEmitterHelpers.hpp",
+      "before_sha256": "11ccebc4fd945dd8f0b8a683320319f2fb1a48c6bede5b54c5642472a0de38b7"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvEmitterState.hpp",
+      "sha256": "ec5f8cec234a89f7c33d5a80f5fa00c9d806bc143b206bc070f920287d840953",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvEmitterState.hpp",
+      "before_sha256": "0c0c44e0e6a79a5f4f98ccc09c9c4de2ad1dea64737cbab0cb1b97342847b404"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvMemory/SpirvDescriptors.hpp",
+      "sha256": "9ef9cec3264856ccc43800e5a00afdb55fbeeb2caaf503dcde4ce494ccf84045",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/include/SpirvBackend/SpirvMemory/SpirvDescriptors.hpp",
+      "before_sha256": "82c8fc0540344ed1c98ba968c8f8d4b19bd918fcbf6af7ad1dc46d22bbcdd24c"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/src/SpirvImageEmitter.cpp",
+      "sha256": "78f5fc942a5b6a182edc16cb7a085ed942a441b1bc44eb5b9518df5c89eba59e",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/src/SpirvImageEmitter.cpp",
+      "before_sha256": "f239b9205899d9af49c9285c5b1f2e233792ab165121fd6e43b800a9f6254910"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/src/SpirvMemory/SpirvDescriptors.cpp",
+      "sha256": "9d1c36bd7a1a7578a23e6cc3a34a8e6d957a1499698bfd9e112345a66d442e34",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/src/SpirvMemory/SpirvDescriptors.cpp",
+      "before_sha256": "17d7a977c162d650e47b14861c972d2d6b9cba0f2a44907b6e56c5b122fd7713"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/src/SpirvMemory/SpirvEmitterHelpers.cpp",
+      "sha256": "7a6347edcafdf6ea509f9857d6386d52a722f513547aeda8e47483f9c67c5d82",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/src/SpirvMemory/SpirvEmitterHelpers.cpp",
+      "before_sha256": "6621c56f379c44b2d633aa982397403343e131dcbd177ce8a97b79ed30345d1f"
+    },
+    {
+      "path": "core/shader/recompiler/SpirvBackend/src/SpirvModuleEmitter.cpp",
+      "sha256": "23bae3e9c49de3d0e43a4b1e8a069832da36bece737424625e055735ae4530f7",
+      "upstream_path": "core/shader/recompiler/SpirvBackend/src/SpirvModuleEmitter.cpp",
+      "before_sha256": "e66280d370d3110c5077f1efda7461841ffd655cf6692a12636aa9d48989fad1"
+    },
+    {
+      "path": "core/shader/recompiler/Translation/src/MemoryInstructions/ImageInstructions.cpp",
+      "sha256": "311c378b0df81faa70bb86189ec2682269ef686f72ed5b0072089c5e6b5f57c2",
+      "upstream_path": "core/shader/recompiler/Translation/src/MemoryInstructions/ImageInstructions.cpp",
+      "before_sha256": "f8d2ef26417c0415916a4232547ee964fa93cdbc49f69a7af76caeaeb492508f"
+    },
+    {
+      "path": "docs/dev/ARCHITECTURE.md",
+      "sha256": "0f6efc98ddee7a2fa6a03906886fbd3e59d198d3964326976b2efdca971d76d9",
+      "upstream_path": "docs/dev/ARCHITECTURE.md",
+      "before_sha256": "6f37f2b8a6674b80da7b29f48b0a085f8ff1c802b94ed9ac914a9afd196beea1"
+    },
+    {
+      "path": "docs/dev/debt/libSceAgcDriver.md",
+      "sha256": "c69c1fda81fafe3a08e633f110605e7d1e9efb1291503b4190287eef33a4e79f",
+      "upstream_path": "docs/dev/debt/libSceAgcDriver.md",
+      "before_sha256": "685bd506928e7678cef0520822cf46e99b11c3e6ae42b478f0295dbf852b08a1"
+    },
+    {
+      "path": "docs/dev/debt/shader.md",
+      "sha256": "920bbe10a0be2fb0d9a6b4ceca973311dbd03127542d8f4eb9bf3923b7f8d275",
+      "upstream_path": "docs/dev/debt/shader.md",
+      "before_sha256": "6e99a3d381e5a1da44330c006f1e524aef33736267240f19453e65148b56e131"
+    },
+    {
+      "path": "docs/user/YoteiLab/LICENCA_E_CREDITOS.md",
+      "sha256": "4fcee733086ecc24954eae4d3d7d377edb30f1af6dcf31e4b29dc733b026fe0a"
+    },
+    {
+      "path": "docs/user/YoteiLab/README.md",
+      "sha256": "bbb318f4b15c738bca99b6efe5359c0d8e835de7872ac1872b08c9e8ac5e395c"
+    },
+    {
+      "path": "tools/import_audit.py",
+      "sha256": "97028af66f125b72698f02744e5bce76a3015ab336d333b55ce587bbe61a0710",
+      "upstream_path": "tools/import_audit.py",
+      "before_sha256": "6db923ace6c7a00bd423aca2fb8c534fe742c542bf99a27319e1e5768bdcf660"
+    },
+    {
+      "path": "tools/tests/test_import_audit.py",
+      "sha256": "624073b29c6ec65c207ed9b8586f405ef872256ee38bb7f12b58f2cdc058aa29",
+      "upstream_path": "tools/tests/test_import_audit.py",
+      "before_sha256": "0cef14fa128f7277e8ea3c5189232ff88bfb588f63bfb0e04c83f41db226817e"
+    },
+    {
+      "path": "tools/yotei-lab/LICENSE",
+      "sha256": "de124e5a899ae4074ebf5c0f790494178ab66d310606b86203d67a6f3ef45168"
+    },
+    {
+      "path": "tools/yotei-lab/dependency-overrides/3rdparty/libusb-cmake/libusb/build-aux/gen-describe.ps1",
+      "sha256": "b9b800f4fa5c4d3617f4c7d1c16e2e4ea0b27788dbce5de89b379429d19e99e6",
+      "upstream_path": "3rdparty/libusb-cmake/libusb/build-aux/gen-describe.ps1",
+      "before_sha256": "4c781875cb62865ad6490794ab8ba396ec3f6089bed4ec208b16b958a7f72256"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/INICIAR_AQUI.bat",
+      "sha256": "de925734a845255b9b911bdb7a8fb48c3363c0ab8dd9645f411338194cc33ea8"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/MENU_TERMINAL.bat",
+      "sha256": "a2a6de0f06ee3a4d92f97d30f09d0d5aae55f7b39af287770b5d0d8ffe36e455"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_backup_retention.py",
+      "sha256": "3679f9d370608484be4c69f7d73e5fd8a5f958bdcc45f3968f634a05dd797fe9"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_export_contribution.py",
+      "sha256": "04eecadb2f55e92e5f555abc1cd84baff60f9bff226d499e7fa6ab7315779ac0"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_ffmpeg_snapshot.py",
+      "sha256": "a2027a8f05b8b263ed765f3e7830f2f14df87a8982439ed16e7f132b52ba6210"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_gui.py",
+      "sha256": "b9822c4f46d305c6d2aa8ea9b4ae7c68dbd79b2fdb51bb733510cde958c21a16"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_log_retention.py",
+      "sha256": "2ad6df14cd2fd36d8c1f51dbec46ee23b3e13ee9cad5a3403a8f7d53fb7a16db"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_project.py",
+      "sha256": "de1566d4ccf706571cb7f54d816d9d8f1bb5cc0c4d8d22d28742bfc9c50c5d14"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_resource_budgets_cpp.py",
+      "sha256": "bc264e6f74e932b6e3ca2c10475dda6405e3344767b1f8a2dd3c3538cccde05c"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_resources.py",
+      "sha256": "b2a2b925b35ee82abad693510139a9e3f4aa2669cc38451222ad23907a7821bf"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_setup_windows.py",
+      "sha256": "c80de41df9e0ac46eef175cb9b5e4c26dbe9a4c85aa3b630e2960bfd65d6bee7"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_shader_diagnostics.py",
+      "sha256": "5fe4446a623d5edd41b7058ba1aca75b9d429d1018f9d5c8fef2c913c31fb4a9"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_updater.py",
+      "sha256": "ed72e0a07f12338d5bf5cf7f5eca4a1008f6ba6c933870e44dcb3445950fdfe3"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tests/test_vrr_backport.py",
+      "sha256": "2bc369f8e39248b46f731643088556afcdf4b05adbd2e64a1fb7e3707fa0f309"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/export_contribution.py",
+      "sha256": "c68b7f7f78f517b8a1c072101c4c7eb9742ac33c826f06bc5f1b5ab2ebd6b866"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/ffmpeg_snapshot.py",
+      "sha256": "f86cbc578264cee25e447dd7f8c562d561cda6b4d36bffafebdd5e79ad1b22c2"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/gui.py",
+      "sha256": "4634d1e2136578ac4343ecd522733ba3a87bc967c00c1d46aad8b6e320ed5163"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/log_retention.py",
+      "sha256": "4bf488bdda4a78090b61bd74517c97cbc8d2d824fdf7212e1b7cde5e446f8f66"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/project.py",
+      "sha256": "71898d12f0b788c46b30e6ea72ef6a67a0e2d153e7df9050ae368a1cabc1ab4a"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/resource_monitor.py",
+      "sha256": "d22c0d8f3c727c344723c79dab915edd1b1ecf9850d43efeefc25c1e3f6578c1"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/resource_profiles.py",
+      "sha256": "7b15ae5fa86e6131200812106140ca1b26c4de22c7b35becbb7aa1bf947b606b"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/setup_windows.py",
+      "sha256": "312da1ddd26c686ac7be68eb56d9905a9bc8fce6e584440b648961dfb0961ec8"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/start_gui.vbs",
+      "sha256": "de705bce70472bf1ccef0e3aa0dea97e113e01640f853fd678b0387b727879fa"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/tools/updater.py",
+      "sha256": "c632f0fd537a0d35abf3ae735437454161638049fe0615f8824df7bf4608aa88"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/ui/app.js",
+      "sha256": "a445c68934df6d057886f76dd9f9175cce238cc984f662579819cbedf4a37657"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/ui/index.html",
+      "sha256": "86095761b11bea73f0ddbef44397524ef34366ebfcd9618f328a333b6e2cf5a1"
+    },
+    {
+      "path": "tools/yotei-lab/laboratory/ui/style.css",
+      "sha256": "3f7a8fa678906865d600c1f866704e36835ba56c79425c980b4105def131b4f5"
+    }
+  ]
+}

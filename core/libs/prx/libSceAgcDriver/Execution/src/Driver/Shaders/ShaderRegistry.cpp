@@ -40,7 +40,7 @@ std::shared_ptr<const ShaderRecompiler::SourceHandle> PrepareShaderWithDiagnosti
     } catch (...) {
         failure = std::current_exception();
         try {
-            if (std::getenv("APS5_DUMP_SHADERS") != nullptr) dump = Driver::dumpRequest(request.shader.codeAddress, request);
+            if (std::getenv("APS5_DUMP_SHADERS") != nullptr) dump = Driver::dumpRequest(request.shader.codeAddress, request, true);
         } catch (...) {}
     }
     try {
@@ -1320,7 +1320,16 @@ void Driver::RegisterShader(const Shader* shader) {
     registered.context = snapshot.registeredState->context;
     registered.userConfig = snapshot.registeredState->userConfig;
     std::shared_ptr<RegisteredPreparation> preparation;
-    if (AsyncRegistrationPrepare()) {
+    static const bool lazyRegistration = [] {
+        const char* value = std::getenv("APS5_DEFER_SHADER_PREPARE");
+        return value != nullptr && std::strcmp(value, "1") == 0;
+    }();
+    if (lazyRegistration) {
+        // Keep registration/header validation. Immutable code and metadata remain
+        // registered; SourceHandleFor prepares and memoizes an artifact at first use.
+        static_cast<void>(PlanRegistered(snapshot, *localDevice, registered, true, &snapshot.prepared->deferred));
+        snapshot.prepared->deferred = true;
+    } else if (AsyncRegistrationPrepare()) {
         preparation = PlanRegistered(snapshot, *localDevice, registered, true, &snapshot.prepared->deferred);
         if (preparation != nullptr) preparation->prebuildDevice = localDevice;
         if (preparation != nullptr && (snapshot.type == 0 || snapshot.type == 1)) BuildRegisteredAbiKey(registered, *localDevice, preparation->abiKey);
