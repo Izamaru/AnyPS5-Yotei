@@ -3729,6 +3729,12 @@ void ResourceCache::Insert(const Key& key, std::shared_ptr<ShaderResources> reso
         entries.erase(found->second);
         index.erase(found);
     }
+    static const std::size_t copiedBudget = [] {
+        const char* value = std::getenv("APS5_RESOURCE_CACHE_COPIED_MIB");
+        const auto mib = value ? std::strtoull(value, nullptr, 10) : 0ull;
+        return static_cast<std::size_t>(std::min(mib, 4096ull) << 20u);
+    }();
+    if (copiedBudget != 0 && resources->CopiedBytes() > copiedBudget) return;
     entries.emplace_front(key, std::move(resources));
     index.emplace(key, entries.begin());
     if (capacity == 0) {
@@ -3743,6 +3749,22 @@ void ResourceCache::Insert(const Key& key, std::shared_ptr<ShaderResources> reso
         if (evicted != nullptr) evicted->push_back(std::move(entries.back().second));
         index.erase(entries.back().first);
         entries.pop_back();
+    }
+    if (copiedBudget != 0 && entries.front().second->CopiedBytes() != 0) {
+        std::size_t bytes = 0;
+        for (const auto& entry : entries) bytes += entry.second->CopiedBytes();
+        for (auto it = std::prev(entries.end()); bytes > copiedBudget && it != entries.begin();) {
+            const auto copied = it->second->CopiedBytes();
+            if (copied == 0) {
+                --it;
+                continue;
+            }
+            bytes -= copied;
+            noteEvicted(it->first);
+            if (evicted != nullptr) evicted->push_back(std::move(it->second));
+            index.erase(it->first);
+            it = std::prev(entries.erase(it));
+        }
     }
     if (entries.front().second->TableElements() == 0) return;
     std::uint64_t tables = 0;
