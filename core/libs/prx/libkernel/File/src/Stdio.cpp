@@ -1394,7 +1394,7 @@ int64_t APS5_VABI pwritev_nid_postfix(int d, const KernelIovec* iov, int iovcnt,
 }
 
 int APS5_VABI sceKernelRename(const char* from, const char* to) {
-    if (!from || !to) return SceErrorFromErrno(GUEST_EFAULT);
+    if (!from) return SceErrorFromErrno(GUEST_EFAULT);
     const int result = RenameGuestPath_nid_no_patch(from, to);
     return result == 0 ? 0 : SceKernelError(errno);
     if (const int dot = RenameDotError_nid_no_patch(from)) return SceKernelError(dot);

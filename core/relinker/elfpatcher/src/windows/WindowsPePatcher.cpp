@@ -18,7 +18,7 @@ namespace {
 
 void writeGotStub(std::vector<PeSection>& sections, const std::uint32_t targetRva, const std::uint32_t stubRva, const std::uint64_t imageBase) {
     for (auto& section : sections) {
-        if (section.Data.size() < 8 || targetRva < section.Rva || targetRva - section.Rva > section.Data.size() - 8)
+        if (!section.Writable(targetRva, 8))
             continue;
         Io::WriteU64(section.Data, targetRva - section.Rva, imageBase + stubRva);
         return;
