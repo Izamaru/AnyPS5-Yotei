@@ -35,6 +35,8 @@ int APS5_VABI sceNetInit_nid_postfix(void);
 int APS5_VABI sceNetShowNetstatWithMemory(int);
 int APS5_VABI sceNetShowNetstat(void);
 int APS5_VABI sceNetShowIfconfig(void);
+int APS5_VABI sceNetShowRoute(void);
+int APS5_VABI sceNetShowRoute6(void);
 int APS5_VABI sceNetSocket(const char*, int, int, int);
 int APS5_VABI sceNetBind_nid_postfix(int, const void*, std::uint32_t);
 int APS5_VABI sceNetListen(int, int);
@@ -53,6 +55,8 @@ int APS5_VABI sceNetShutdown(int, int);
 int APS5_VABI sceNetSetsockopt(int, int, int, const void*, std::uint32_t);
 int APS5_VABI sceNetGetsockopt(int, int, int, void*, std::uint32_t*);
 int* APS5_VABI sceNetErrnoLoc(void);
+int APS5_VABI sceNetEtherNtostr(const NetEtherAddr*, char*, std::size_t);
+int APS5_VABI sceNetEtherStrton(const char*, NetEtherAddr*);
 int APS5_VABI sceNetEpollCreate(const char*, int);
 int APS5_VABI sceNetEpollControl(int, int, int, const NetEpollEvent*);
 int APS5_VABI sceNetEpollWait(int, NetEpollEvent*, int, int);
@@ -72,7 +76,10 @@ int APS5_VABI sceNetResolverAbort(int, int);
 int APS5_VABI sceNetResolverDestroy(int);
 int APS5_VABI sceNetResolverGetError(int, int*);
 int APS5_VABI sceNetClearDnsCache(int);
+int APS5_VABI sceNetGetDnsInfo(std::uint32_t*, int);
+int APS5_VABI sceNetCtlInit(void);
 int APS5_VABI sceNetCtlGetState(int*);
+int APS5_VABI sceNetCtlGetInfo(int, NetCtlInfo*);
 int APS5_VABI sceNetCtlGetIfStat(NetCtlIfStat*);
 int APS5_VABI sceNetCtlRegisterCallback(NetCtlCallback, void*, int*);
 int APS5_VABI sceNetCtlUnregisterCallback(int);
@@ -131,7 +138,7 @@ int APS5_VABI sceNetPoolDestroy(int);
 int APS5_VABI sceNetGetMemoryPoolStats(int, NetMemoryPoolStats*);
 const char* APS5_VABI sceNetGetIfName(std::uint32_t);
 int APS5_VABI sceNetGetRandom(std::uint32_t*);
-void* APS5_VABI sceNetMemoryAllocate(std::int64_t, int);
+void* APS5_VABI sceNetMemoryAllocate(std::int32_t, int);
 void APS5_VABI sceNetMemoryFree(void*);
 }
 
@@ -143,6 +150,10 @@ static void APS5_VABI IgnoreNetCtlEvent(int, void*) {}
 
 static bool Failed(std::int64_t result, int error) {
     return result == static_cast<int>(0x80410100u | static_cast<unsigned>(error)) && *sceNetErrnoLoc() == error;
+}
+
+static void CheckSocketHostErrors() {
+    Require(Failed(sceNetSocket(nullptr, 2, 1, 17), 43));
 }
 
 static void CheckStreamSender(int family) {
@@ -231,8 +242,17 @@ static std::string CaptureNetstat(int pool) {
 }
 
 static void CheckNetstat() {
-    Require(sceNetShowNetstat() == 0);
-    Require(sceNetShowIfconfig() == 0);
+    for (const auto diagnostic : {sceNetShowNetstat, sceNetShowIfconfig}) {
+        bool unsupported = false;
+        try {
+            diagnostic();
+        } catch (const std::runtime_error&) {
+            unsupported = true;
+        }
+        Require(unsupported);
+    }
+    Require(sceNetShowRoute() == 0);
+    Require(sceNetShowRoute6() == 0);
     Require(Failed(sceNetShowNetstatWithMemory(-1), 9));
     const int pool = sceNetPoolCreate("netstat", 4096, 0);
     Require(pool > 0);
@@ -293,6 +313,8 @@ static void CheckRandom() {
 static void CheckNetMemory() {
     Require(sceNetMemoryAllocate(0, 0) == nullptr);
     Require(sceNetMemoryAllocate(-1, 2) == nullptr);
+    Require(sceNetMemoryAllocate(0, 4) == nullptr);
+    Require(sceNetMemoryAllocate(INT32_MIN, -1) == nullptr);
     auto* zeroed = static_cast<std::uint8_t*>(sceNetMemoryAllocate(4096, 2));
     Require(zeroed != nullptr);
     Require(std::all_of(zeroed, zeroed + 4096, [](std::uint8_t byte) { return byte == 0; }));
@@ -304,9 +326,15 @@ static void CheckNetMemory() {
     sceNetMemoryFree(plain);
     sceNetMemoryFree(zeroed);
     sceNetMemoryFree(nullptr);
+    for (const int flags : {1, 0x40000001, -5}) {
+        auto* allocation = static_cast<std::uint8_t*>(sceNetMemoryAllocate(16, flags));
+        Require(allocation != nullptr);
+        if ((flags & 2) != 0) Require(std::all_of(allocation, allocation + 16, [](std::uint8_t byte) { return byte == 0; }));
+        sceNetMemoryFree(allocation);
+    }
     bool threw = false;
     try {
-        sceNetMemoryAllocate(16, 1);
+        sceNetMemoryAllocate(16, 4);
     } catch (const std::runtime_error&) {
         threw = true;
     }
@@ -855,6 +883,96 @@ static void CheckInetPtonEx() {
         address.fill(0);
         Require(sceNetInetPtonEx(2, "1.2.3", address.data(), flags) == 1);
         Require(address[0] == 1 && address[1] == 2 && address[2] == 0 && address[3] == 3);
+    }
+}
+
+static void CheckEtherAddress() {
+    struct GuardedAddress {
+        std::uint8_t before;
+        NetEtherAddr address;
+        std::uint8_t after;
+    };
+    static_assert(sizeof(GuardedAddress) == 8);
+    const GuardedAddress original{0x12, {{0xa5, 0xa5, 0xa5, 0xa5, 0xa5, 0xa5}}, 0x34};
+    for (const char* text : {"00:01:02:0A:0b:0F", "00-01-02-0A-0b-0F", "00.01 02+0A/0b_0F", "00:01:02:0A:0b:0F trailing"}) {
+        auto output = original;
+        const std::array<std::uint8_t, 6> expected{0, 1, 2, 10, 11, 15};
+        *sceNetErrnoLoc() = 33;
+        Require(sceNetEtherStrton(text, &output.address) == 0);
+        Require(std::memcmp(output.address.data, expected.data(), expected.size()) == 0);
+        Require(output.before == original.before && output.after == original.after && *sceNetErrnoLoc() == 33);
+    }
+    for (unsigned value = 0; value < 256; ++value) {
+        NetEtherAddr input{};
+        for (unsigned index = 0; index < 6; ++index) input.data[index] = static_cast<std::uint8_t>(value + index * 43);
+        char text[18]{};
+        Require(sceNetEtherNtostr(&input, text, sizeof(text)) == 0);
+        auto output = original;
+        Require(sceNetEtherStrton(text, &output.address) == 0);
+        Require(std::memcmp(input.data, output.address.data, sizeof(input.data)) == 0);
+        Require(output.before == original.before && output.after == original.after);
+    }
+    const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:-. +";
+    for (std::size_t index = 0; index + 1 < sizeof(digits); ++index) {
+        const unsigned digit = index < 36 ? index : index < 62 ? index - 26 : 0x7f;
+        for (std::size_t position = 0; position < 2; ++position) {
+            std::string text = "01:23:45:67:89:ab";
+            text[position] = digits[index];
+            const std::array<std::uint8_t, 6> expected{static_cast<std::uint8_t>(position == 0 ? digit * 16 + 1 : digit), 0x23, 0x45, 0x67, 0x89, 0xab};
+            auto output = original;
+            *sceNetErrnoLoc() = 33;
+            Require(sceNetEtherStrton(text.c_str(), &output.address) == 0);
+            Require(std::memcmp(output.address.data, expected.data(), expected.size()) == 0);
+            Require(output.before == original.before && output.after == original.after && *sceNetErrnoLoc() == 33);
+        }
+    }
+    for (const char* text : {"", "0", "0:1:2:a:B:f", "0-1-2-a-B-f", "0:1-2:a-B:f", "0:1:2:3:4", "0:1:2:3:4:",
+             "0:1:2:3:4:5:6", "000:1:2:3:4:5", "0:1:2:3:4:555", ":0:1:2:3:4:5", "0::1:2:3:4:5", "0.1.2.3.4.5",
+             "0x0:1:2:3:4:5", "0:1:2:3:4:g", "+0:1:2:3:4:5", " 0:1:2:3:4:5", "0:1:2:3:4:5 ", "0:1:2:3:4:5\n", "001a2bcdeff0"}) {
+        auto output = original;
+        Require(Failed(sceNetEtherStrton(text, &output.address), 22));
+        Require(std::memcmp(&output, &original, sizeof(output)) == 0);
+    }
+    const std::string valid = "00:11:22:33:44:55";
+    std::vector<char> fixed(valid.begin(), valid.end());
+    auto fixedOutput = original;
+    Require(sceNetEtherStrton(fixed.data(), &fixedOutput.address) == 0);
+    const std::array<std::uint8_t, 6> fixedExpected{0, 0x11, 0x22, 0x33, 0x44, 0x55};
+    Require(std::memcmp(fixedOutput.address.data, fixedExpected.data(), fixedExpected.size()) == 0);
+    Require(fixedOutput.before == original.before && fixedOutput.after == original.after);
+    for (std::size_t length = 0; length < valid.size(); ++length) {
+        std::vector<char> text(length + 1, '\0');
+        std::memcpy(text.data(), valid.data(), length);
+        auto output = original;
+        Require(Failed(sceNetEtherStrton(text.data(), &output.address), 22));
+        Require(std::memcmp(&output, &original, sizeof(output)) == 0);
+    }
+    for (std::size_t position = 0; position < valid.size(); ++position) {
+        auto text = valid;
+        text[position] = '\0';
+        auto output = original;
+        Require(Failed(sceNetEtherStrton(text.c_str(), &output.address), 22));
+        Require(std::memcmp(&output, &original, sizeof(output)) == 0);
+    }
+    auto output = original;
+    Require(Failed(sceNetEtherStrton(nullptr, &output.address), 22));
+    Require(std::memcmp(&output, &original, sizeof(output)) == 0);
+    Require(Failed(sceNetEtherStrton(valid.c_str(), nullptr), 22));
+    Require(Failed(sceNetEtherStrton(nullptr, nullptr), 22));
+    for (std::size_t position = 0; position < valid.size(); ++position) {
+        auto text = valid;
+        text[position] = static_cast<char>(0xff);
+        output = original;
+        bool threw = false;
+        try {
+            Require(sceNetEtherStrton(text.c_str(), &output.address) == 0);
+        } catch (const std::runtime_error&) {
+            threw = true;
+        }
+        Require(threw == (position % 3 != 2));
+        if (threw) Require(std::memcmp(&output, &original, sizeof(output)) == 0);
+        else Require(std::memcmp(output.address.data, fixedExpected.data(), fixedExpected.size()) == 0);
+        Require(output.before == original.before && output.after == original.after);
     }
 }
 
@@ -1418,6 +1536,7 @@ static void CheckDatagramDisconnect() {
 }
 
 int main() {
+    CheckEtherAddress();
     const auto epoch = std::chrono::steady_clock::time_point{};
     Require(KernelSocketSelect::DeadlineAfter(epoch, 2, 250000) == epoch + std::chrono::milliseconds(2250));
     Require(KernelSocketSelect::DeadlineAfter(epoch, INT64_MAX, 0) == std::chrono::steady_clock::time_point::max());
@@ -1429,8 +1548,21 @@ int main() {
         Require(in6addr_any_nid_postfix[i] == 0);
         Require(in6addr_loopback_nid_postfix[i] == (i == 15 ? 1 : 0));
     }
+    for (const int flags : {0, 1, -1}) {
+        Require(sceNetClearDnsCache(flags) == static_cast<int>(0x804101C8));
+        Require(*sceNetErrnoLoc() == 200);
+    }
+    std::uint32_t randomOutput = 0x12345678;
+    Require(Failed(sceNetGetRandom(&randomOutput), 200));
+    Require(randomOutput == 0x12345678);
+    Require(Failed(sceNetGetRandom(nullptr), 200));
+    Require(Failed(sceNetUsleep(0), 200));
+    Require(Failed(sceNetUsleep(-1), 200));
+    Require(Failed(sceNetShowNetstat(), 200));
+    Require(Failed(sceNetShowIfconfig(), 200));
     Require(sceNetInit_nid_postfix() == 0);
     CheckEpollWritable();
+    CheckSocketHostErrors();
     CheckPoolStats();
     CheckIfName();
     CheckRandom();
@@ -1812,10 +1944,9 @@ int main() {
     ipv4.fill(0xA5);
     Require(sceNetResolverStartNtoa(resolver, "localhost", ipv4.data(), 5000000, 1, 0) == 0 && ipv4[0] == 127);
     Require(sceNetResolverGetError(resolver, &resolver_error) == 0 && resolver_error == 0);
-    for (const int flags : {0x1, -1}) {
-        bool threw = false;
-        try { sceNetClearDnsCache(flags); } catch (const std::runtime_error&) { threw = true; }
-        Require(threw);
+    for (const int flags : {1, 2, 0x10000, -1}) {
+        Require(sceNetClearDnsCache(flags) == static_cast<int>(0x80410116));
+        Require(*sceNetErrnoLoc() == 22);
     }
     Require(sceNetResolverDestroy(resolver) == 0);
     resolver_error = -1;
@@ -1837,6 +1968,7 @@ int main() {
     if (!ipv6Unavailable) CheckStreamSender(28);
 
     int state = -1;
+    Require(sceNetCtlInit() == 0);
     Require(sceNetCtlGetState(&state) == 0);
     Require(state == 0 || state == 3);
     Require(sceNetCtlGetIfStat(nullptr) == static_cast<int>(0x80412107));
@@ -1855,6 +1987,34 @@ int main() {
             missing = true;
         }
         Require(missing);
+    }
+    {
+        std::array<std::uint32_t, 3> dns{};
+        dns.fill(0xA5A5A5A5u);
+        const int count = sceNetGetDnsInfo(dns.data(), 0);
+        Require(count >= 0 && count <= 2 && dns[2] == 0xA5A5A5A5u);
+        Require(count == 0 || state == 3);
+        for (int index = count; index < 2; ++index) Require(dns[index] == 0);
+        for (int index = 0; index < 2; ++index) {
+            NetCtlInfo info{};
+            const int result = sceNetCtlGetInfo(17 + index, &info);
+            if (result != 0) {
+                Require(result == static_cast<int>(0x80412108) && count == 0);
+                continue;
+            }
+            const auto* bytes = reinterpret_cast<const std::uint8_t*>(&dns[index]);
+            char text[16] = {};
+            std::snprintf(text, sizeof(text), "%u.%u.%u.%u", static_cast<unsigned>(bytes[0]), static_cast<unsigned>(bytes[1]), static_cast<unsigned>(bytes[2]), static_cast<unsigned>(bytes[3]));
+            Require(std::strcmp(text, reinterpret_cast<const char*>(info.opaque)) == 0);
+        }
+        for (const int flags : {0x1, -1}) {
+            bool threw = false;
+            try { sceNetGetDnsInfo(dns.data(), flags); } catch (const std::runtime_error&) { threw = true; }
+            Require(threw);
+        }
+        bool threw = false;
+        try { sceNetGetDnsInfo(nullptr, 0); } catch (const std::runtime_error&) { threw = true; }
+        Require(threw);
     }
     NetCtlIfStat first{};
     first.device = 7;
