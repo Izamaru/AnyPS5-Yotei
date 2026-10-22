@@ -385,6 +385,7 @@ int APS5_VABI chroot_nid_postfix(const char* path) {
 
 int APS5_VABI symlink_nid_postfix(const char* target, const char* created) {
     if (target == nullptr || created == nullptr) return static_cast<int>(Fail(GuestEfault));
+    if (std::strlen(target) >= GuestPathMax) return static_cast<int>(Fail(GuestEnametoolong));
     if (*target == '\0' || *created == '\0') return static_cast<int>(Fail(GuestEnoent));
     const std::filesystem::path contents(target);
     if (contents.has_root_name() || contents.has_root_directory()) {

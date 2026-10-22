@@ -297,6 +297,19 @@ int main() {
         Require(symlink_nid_postfix("file.txt", created.c_str()) == -1 && Error() == expected);
         Require(std::filesystem::hard_link_count(file) == 1 && !std::filesystem::exists(root / "new.txt"));
     }
+    for (const std::size_t length : {std::size_t{1024}, std::size_t{1100}}) {
+        const auto tooLong = std::string(length, 'a');
+        const auto created = (root / "target-too-long").string();
+        Require(symlink_nid_postfix(tooLong.c_str(), created.c_str()) == -1 && Error() == 63);
+        Require(!std::filesystem::exists(std::filesystem::symlink_status(root / "target-too-long")));
+    }
+    {
+        const auto longest = std::string(1023, 'a');
+        const auto created = (root / "target-longest").string();
+        const int made = symlink_nid_postfix(longest.c_str(), created.c_str());
+        Require(made == 0 || Error() != 63);
+        if (made == 0) Require(RemoveSymlink(created));
+    }
     Require(readlink_nid_postfix(file.c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
     Require(readlink_nid_postfix(root.string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
     Require(readlink_nid_postfix((root / "missing").string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 2);

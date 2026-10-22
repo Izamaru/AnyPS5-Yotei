@@ -32,6 +32,9 @@ char16_t* APS5_VABI wcsncpy_nid_postfix(char16_t* dest, const char16_t* src, std
 int APS5_VABI wmemcpy_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src, std::size_t count);
 int APS5_VABI wmemmove_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src, std::size_t count);
 int APS5_VABI wcsncpy_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src, std::size_t count);
+int APS5_VABI wcscpy_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src);
+void* APS5_VABI set_constraint_handler_s_nid_postfix(void* handler);
+void APS5_VABI ignore_handler_s_nid_postfix(const char* message, void* pointer, int error);
 char16_t* APS5_VABI wcsncat_nid_postfix(char16_t* dest, const char16_t* src, std::size_t n);
 int APS5_VABI wcsncat_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src, std::size_t count);
 int APS5_VABI wcscat_s_nid_postfix(char16_t* dest, std::size_t destsz, const char16_t* src);
@@ -204,6 +207,19 @@ int main() {
     require(wcsncpy_s_nid_postfix(strBuf, ((SIZE_MAX >> 1) / sizeof(char16_t)) + 1, u"a", 1) == 34);
     wcsncpy_s_nid_postfix(strBuf, 16, u"abcdef", 6);
     require(wcsncpy_s_nid_postfix(strBuf + 1, 10, strBuf, 3) == 22 && strBuf[1] == 0);
+
+    char16_t cpyBuf[16];
+    require(wcscpy_s_nid_postfix(cpyBuf, 16, u"wide") == 0 && same(cpyBuf, u"wide", 5));
+    void* previousHandler = set_constraint_handler_s_nid_postfix(reinterpret_cast<void*>(&ignore_handler_s_nid_postfix));
+    require(wcscpy_s_nid_postfix(nullptr, 16, u"wide") == 22);
+    require(wcscpy_s_nid_postfix(cpyBuf, 0, u"wide") == 22);
+    require(wcscpy_s_nid_postfix(cpyBuf, 16, nullptr) == 22 && cpyBuf[0] == 0);
+    require(wcscpy_s_nid_postfix(cpyBuf, 4, u"wide") == 34 && cpyBuf[0] == 0);
+    cpyBuf[0] = 0x1234;
+    require(wcscpy_s_nid_postfix(cpyBuf, ((SIZE_MAX >> 1) / sizeof(char16_t)) + 1, u"a") == 34 && cpyBuf[0] == 0x1234);
+    wcscpy_s_nid_postfix(cpyBuf, 16, u"abcdef");
+    require(wcscpy_s_nid_postfix(cpyBuf + 1, 10, cpyBuf) == 22 && cpyBuf[1] == 0);
+    set_constraint_handler_s_nid_postfix(previousHandler);
 
     char16_t ncatBuf[16];
     wmemset_nid_postfix(ncatBuf, 0xaaaa, 16);

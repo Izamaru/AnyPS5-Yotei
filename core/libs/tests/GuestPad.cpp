@@ -149,6 +149,17 @@ static void CheckAngularVelocityDeadband(int handle) {
     PadPublishInput_nid_postfix(PadInputState{});
 }
 
+static void CheckStickDeadZones(int handle) {
+    PadControllerInformation info{};
+    Require(scePadGetControllerInformation(handle, &info) == PAD_OK);
+    Require(info.stickInfo.deadZoneLeft == 13 && info.stickInfo.deadZoneRight == 13);
+    std::array<std::uint8_t, 0x2c> extended{};
+    Require(scePadGetExtControllerInformation(handle, extended.data()) == PAD_OK);
+    PadControllerInformation base{};
+    std::memcpy(&base, extended.data(), sizeof(base));
+    Require(base.stickInfo.deadZoneLeft == 13 && base.stickInfo.deadZoneRight == 13);
+}
+
 static void CheckTouchContact() {
     PadInputState touch;
     touch.buttons = static_cast<std::uint32_t>(Pad::PadButton::TouchPad);
@@ -442,6 +453,7 @@ int main() {
     CheckTouchContact();
     CheckVirtualTouchContact();
     CheckTouchPadInformation(handle);
+    CheckStickDeadZones(handle);
     CheckPartialTrigger();
     CheckReadQueue(handle);
     CheckTapBetweenReads();

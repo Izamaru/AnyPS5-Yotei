@@ -160,6 +160,16 @@ if(WIN32)
         add_test(NAME windows_dependency_diagnostics COMMAND windows_dependency_diagnostics_tests)
     endif()
 
+    if(NOT ANYPS5_RELINKER_ONLY)
+        add_test_executable(windows_import_identity_tests EXCLUDE_FROM_ALL ${CMAKE_CURRENT_SOURCE_DIR}/elfpatcher/tests/WindowsImportIdentityTests.cpp)
+        target_link_libraries(windows_import_identity_tests PRIVATE relinker_core)
+        if(BUILD_TESTING)
+            set_target_properties(windows_import_identity_tests PROPERTIES EXCLUDE_FROM_ALL FALSE)
+            add_dependencies(windows_import_identity_tests libs)
+            add_test(NAME windows_import_identity COMMAND windows_import_identity_tests "${CMAKE_BINARY_DIR}/core/libs/libs")
+        endif()
+    endif()
+
     add_test_executable(amd64_only_windows_tests EXCLUDE_FROM_ALL
         ${CMAKE_CURRENT_SOURCE_DIR}/elfpatcher/tests/Amd64OnlyWindowsTests.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/elfpatcher/src/windows/WindowsTrampolineBuilder.cpp

@@ -504,6 +504,7 @@ void encodeArtifact(Writer& writer, const CompiledShaderArtifact& result) {
         out.Value(parameter.custom);
         out.Value(parameter.flatP10);
         out.Value(parameter.vertexOrder);
+        out.Value(parameter.flatP20);
     });
     writer.Value(result.barycentricEmulation.active);
     writer.Value(result.barycentricEmulation.smooth);
@@ -562,6 +563,7 @@ void decodeArtifact(Reader& reader, CompiledShaderArtifact& result) {
         in.Value(parameter.custom);
         in.Value(parameter.flatP10);
         in.Value(parameter.vertexOrder);
+        in.Value(parameter.flatP20);
     });
     reader.Value(result.barycentricEmulation.active);
     reader.Value(result.barycentricEmulation.smooth);
