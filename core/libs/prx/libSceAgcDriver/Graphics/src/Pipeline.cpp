@@ -112,6 +112,10 @@ void ValidateProvokingVertex(const Context& context, const State& state, std::sp
         }
         return;
     }
+    for (const auto& shader : shaders) {
+        if (shader.stage != ShaderRecompiler::ShaderStage::Fragment || shader.program == nullptr) continue;
+        Require(std::none_of(shader.program->fragmentParameters.begin(), shader.program->fragmentParameters.end(), [](const ShaderRecompiler::FragmentParameter& parameter) { return parameter.flatP20; }), "v_interp_mov p20 of a flat input with the last provoking vertex is not measured");
+    }
     if (BarycentricPatches(state, shaders)) {
         for (const auto& shader : shaders) {
             if (shader.stage != ShaderRecompiler::ShaderStage::Fragment || shader.program == nullptr) continue;

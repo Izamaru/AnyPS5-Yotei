@@ -187,8 +187,8 @@ int APS5_VABI scePadGetControllerInformation(int handle, PadControllerInformatio
  info->touchPadInfo.pixelDensity = 44.86f;
  info->touchPadInfo.resolution.x = kTouchPadWidth;
  info->touchPadInfo.resolution.y = kTouchPadHeight;
- info->stickInfo.deadZoneLeft = 2;
- info->stickInfo.deadZoneRight = 2;
+ info->stickInfo.deadZoneLeft = 13;
+ info->stickInfo.deadZoneRight = 13;
  info->connectionType = PAD_CONNECTION_TYPE_LOCAL;
  info->connectedCount = 1;
  info->connected = true;
@@ -231,8 +231,8 @@ int APS5_VABI scePadGetExtControllerInformation(int handle, void* info) {
  base->touchPadInfo.pixelDensity = 44.86f;
  base->touchPadInfo.resolution.x = kTouchPadWidth;
  base->touchPadInfo.resolution.y = kTouchPadHeight;
- base->stickInfo.deadZoneLeft = 2;
- base->stickInfo.deadZoneRight = 2;
+ base->stickInfo.deadZoneLeft = 13;
+ base->stickInfo.deadZoneRight = 13;
  base->connectionType = PAD_CONNECTION_TYPE_LOCAL;
  base->connectedCount = 1;
  base->connected = true;

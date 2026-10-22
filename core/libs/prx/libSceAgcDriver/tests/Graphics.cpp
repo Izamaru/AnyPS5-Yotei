@@ -766,10 +766,12 @@ void msaaEnableClearOneSampleTargetTests() {
     expectFailure([&] { DecodeState(queue); }, refused);
     queue = drawC();
     queue.context[0x2dc] = 0x0000aa01u;
-    expectFailure([&] { DecodeState(queue); }, "without MSAA_ENABLE are unsupported for points, lines");
-    queue = drawC();
-    queue.userConfig[0x242] = 2;
-    expectFailure([&] { DecodeState(queue); }, "without MSAA_ENABLE are unsupported for points, lines");
+    expectFailure([&] { DecodeState(queue); }, "without MSAA_ENABLE are unsupported for points or alpha-to-coverage");
+    for (const auto primitive : {2u, 3u}) {
+        queue = drawC();
+        queue.userConfig[0x242] = primitive;
+        requireOneSample(queue, "a line list or strip into PPSA18216's draw C target");
+    }
     const auto twoTargets = [&](std::uint32_t first, std::uint32_t second) {
         auto pair = drawC();
         for (const auto offset : {0x318u, 0x31bu, 0x31cu}) pair.context[offset + 0xfu] = pair.context.at(offset);
@@ -854,9 +856,11 @@ void msaaEnableClearOneSampleTargetTests() {
         queue = depthTarget(color);
         queue.context[0x2dc] = 0x0000aa01u;
         expectFailure([&] { DecodeState(queue); }, depthRefused);
-        queue = depthTarget(color);
-        queue.userConfig[0x242] = 2;
-        expectFailure([&] { DecodeState(queue); }, depthRefused);
+        for (const auto primitive : {2u, 3u}) {
+            queue = depthTarget(color);
+            queue.userConfig[0x242] = primitive;
+            expectFailure([&] { DecodeState(queue); }, depthRefused);
+        }
         for (const auto eqaa : {0x00050002u, 0x00090002u, 0x01010002u, 0x08010002u}) {
             queue = depthTarget(color);
             queue.context[0x201] = eqaa;
@@ -2396,10 +2400,12 @@ void DepthStencilTests() {
         queue.context[0x000] = 0x22u | control;
         expectFailure([&] { AgcDriver::Graphics::DecodeState(queue); }, "DB_RENDER_CONTROL");
     }
-    queue.context[0x000] = 0x22;
+    queue.context[0x000] = 0x23;
     queue.context[0x011] = 0;
-    expectFailure([&] { AgcDriver::Graphics::DecodeState(queue); }, "writable stencil plane");
-    Require(AgcDriver::Graphics::DrawRejection(queue, false).find("writable stencil plane") != std::string::npos, "precheck accepted clear without a stencil plane");
+    state = AgcDriver::Graphics::DecodeState(queue);
+    Require(state.depthWrite && state.depthCompare == VK_COMPARE_OP_ALWAYS && !state.stencilTest && state.colors.size() == 2, "a depth and stencil clear without a stencil plane does not clear depth alone");
+    Require(AgcDriver::Graphics::DrawRejection(queue, false).empty(), "precheck rejected a stencil clear without a stencil plane");
+    queue.context[0x000] = 0x22;
     queue.context[0x010] = 0;
     state = AgcDriver::Graphics::DecodeState(queue);
     Require(!state.depth && !state.depthTest && !state.depthWrite && !state.stencilTest && state.colors.size() == 2, "clear flags without depth/stencil planes changed color-only rendering");
@@ -3349,6 +3355,41 @@ void msaaEnableClearDepthTests() {
     state = DecodeState(queue);
     Require(state.colors.empty(), "a depth-only 4x draw without MSAA_ENABLE decoded a color target");
     requireCentered(state, "a 4x depth target rasterized without MSAA_ENABLE");
+    for (const auto primitive : {2u, 3u}) {
+        queue = drawB();
+        queue.userConfig[0x242] = primitive;
+        state = DecodeState(queue);
+        Require(state.topology == (primitive == 2u ? VK_PRIMITIVE_TOPOLOGY_LINE_LIST : VK_PRIMITIVE_TOPOLOGY_LINE_STRIP) && state.colors.size() == 1 && state.colors[0].samples == 4, "PPSA18216's line list or strip into its 4x depth and color pair lost its topology or color target");
+        requireCentered(state, "a line list or strip into PPSA18216's 4x depth and color pair without MSAA_ENABLE");
+        Require(!state.sampleLocationGrid && !state.perSampleShading, "a line list or strip without MSAA_ENABLE kept a sample location grid or sample shading");
+        Require(AgcDriver::Graphics::DrawRejection(queue, false).empty(), "the precheck refused a line list or strip into PPSA18216's 4x depth and color pair");
+    }
+    queue = drawB();
+    queue.userConfig[0x242] = 1;
+    queue.context[0x2d5] = 0x2030;
+    queue.userConfig[0x25b] = 0x6633;
+    queue.context[0x1ff] = 255;
+    queue.context[0x2ce] = 5;
+    queue.context[0x29b] = 2;
+    queue.context[0x2ab] = 4;
+    queue.shader[0x8a] = 3u << 29u;
+    queue.shader[0x8b] = 3u << 16u;
+    state = DecodeState(queue);
+    Require(state.topology == VK_PRIMITIVE_TOPOLOGY_POINT_LIST && state.stages.mesh && state.stages.mesh->outputPrimitiveSize == 3u && AgcDriver::Graphics::RasterPrimitiveOf(state) == ShaderRecompiler::RasterPrimitive::Triangle && state.colors.size() == 1 && state.colors[0].samples == 4, "a point list into a geometry program that outputs triangle strips into PPSA18216's 4x depth and color pair did not decode as triangles");
+    requireCentered(state, "triangles a geometry program makes from a point list into PPSA18216's 4x depth and color pair without MSAA_ENABLE");
+    for (const auto primitive : {4u, 2u, 1u}) {
+        queue = drawB();
+        queue.userConfig[0x242] = primitive;
+        queue.context[0x2d5] = 0x2030;
+        queue.userConfig[0x25b] = 0x6633;
+        queue.context[0x1ff] = 255;
+        queue.context[0x2ce] = 5;
+        queue.context[0x29b] = 0;
+        queue.context[0x2ab] = 4;
+        queue.shader[0x8a] = 3u << 29u;
+        queue.shader[0x8b] = 3u << 16u;
+        expectFailure([&] { DecodeState(queue); }, "multisampled targets rasterized without MSAA_ENABLE are unsupported for points or alpha-to-coverage");
+    }
     for (const auto eqaa : {0x00050002u, 0x00090002u, 0x01010002u, 0x08010002u}) {
         queue = drawB();
         queue.context[0x201] = eqaa;
@@ -3360,7 +3401,7 @@ void msaaEnableClearDepthTests() {
     expectFailure([&] { DecodeState(queue); }, "a multisampled depth target rasterized without MSAA_ENABLE with a sample-mask export");
     queue = drawB();
     queue.context[0x2dc] = 0x0000aa01u;
-    expectFailure([&] { DecodeState(queue); }, "multisampled targets rasterized without MSAA_ENABLE are unsupported for points, lines or alpha-to-coverage");
+    expectFailure([&] { DecodeState(queue); }, "multisampled targets rasterized without MSAA_ENABLE are unsupported for points or alpha-to-coverage");
     queue = drawB();
     queue.context[0x010] = 0xa2900987;
     expectFailure([&] { DecodeState(queue); }, "the depth target's sample count differs from the rasterizer's");
@@ -3667,7 +3708,7 @@ void multisampleTests() {
     const auto aliased = AgcDriver::Graphics::SampleLocations(state);
     for (std::uint32_t sample = 0; sample < state.samples; ++sample) Require(aliased[sample].x == 0.5f && aliased[sample].y == 0.5f, "a 2x target rasterized without MSAA_ENABLE did not place every sample at the pixel center");
     queue.context[0x2dc] = 0x0000aa01u;
-    expectFailure([&] { DecodeState(queue); }, "without MSAA_ENABLE are unsupported for points, lines or alpha-to-coverage");
+    expectFailure([&] { DecodeState(queue); }, "without MSAA_ENABLE are unsupported for points or alpha-to-coverage");
     queue = multisampled();
     queue.context[0x292] = 2;
     queue.context[0x302] = 0x44cc;
@@ -9171,6 +9212,14 @@ void ProvokingVertexTests() {
     const std::array<CompiledShader, 1> flatP10Shaders{{{ShaderRecompiler::ShaderStage::Fragment, &flatP10Pixel, 0}}};
     ValidateProvokingVertex(supported, last, flatP10Shaders);
     expectFailure([&] { ValidateProvokingVertex(supported, first, flatP10Shaders); }, "v_interp_mov p10 of a flat input with the first provoking vertex is not measured");
+    const std::array<std::uint32_t, 7> flatP20Color{0xc8120001u, 0xc8160101u, 0xc81a0201u, 0xc81e0301u, 0xf800180fu, 0x07060504u, 0xbf810000u};
+    const auto flatP20Pixel = recompilePixel({0x400u}, flatP20Color);
+    const auto p20Inputs = locatedInputs(flatP20Pixel.spirv.Words());
+    Require(p20Inputs.size() == 1 && p20Inputs[0].location == 0 && p20Inputs[0].flat && !p20Inputs[0].perVertex, "flat v_interp_mov P20 did not compile to a flat input");
+    Require(flatP20Pixel.fragmentParameters.size() == 1 && flatP20Pixel.fragmentParameters[0].flatP20 && !flatP20Pixel.fragmentParameters[0].flatP10 && !flatP20Pixel.fragmentParameters[0].perVertex && !flatP10Pixel.fragmentParameters[0].flatP20, "flat v_interp_mov P20 was not recorded apart from P10");
+    const std::array<CompiledShader, 1> flatP20Shaders{{{ShaderRecompiler::ShaderStage::Fragment, &flatP20Pixel, 0}}};
+    ValidateProvokingVertex(supported, first, flatP20Shaders);
+    expectFailure([&] { ValidateProvokingVertex(supported, last, flatP20Shaders); }, "v_interp_mov p20 of a flat input with the last provoking vertex is not measured");
     auto lastStrip = last;
     lastStrip.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
     auto lastList = last;
