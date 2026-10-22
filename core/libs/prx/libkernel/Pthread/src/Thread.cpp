@@ -35,7 +35,6 @@
 
 static constexpr int SCE_OK = 0;
 
-static constexpr std::size_t DEFAULT_STACK_SIZE = 1u << 20;
 static constexpr std::size_t HOST_STACK_MARGIN = 1u << 20;
 static constexpr int DETACH_DETACHED = 1;
 static constexpr std::size_t THREAD_NAME_CAPACITY = 32;
@@ -43,6 +42,7 @@ static constexpr std::size_t THREAD_NAME_CAPACITY = 32;
 #ifdef _WIN32
 #include <windows.h>
 #include <process.h>
+#include <immintrin.h>
 #endif
 
 struct ThreadArgs {
@@ -439,14 +439,17 @@ KernelCpumask LiveGuestThreadsAffinity() {
     return mask;
 }
 
-bool GuestThreadIsLive(const PthreadPrivate* thread) {
+std::unique_lock<std::mutex> LockLiveGuestThread(const PthreadPrivate* thread) {
     auto& registry = CpuClocks();
-    std::lock_guard lock(registry.lock);
+    std::unique_lock lock(registry.lock);
     for (const auto& [id, live] : registry.threads) {
-        if (live != thread) continue;
-        return !live->_finished.load(std::memory_order_acquire);
+        if (live == thread && !live->_finished.load(std::memory_order_acquire)) return lock;
     }
-    return false;
+    return {};
+}
+
+bool GuestThreadIsLive(const PthreadPrivate* thread) {
+    return LockLiveGuestThread(thread).owns_lock();
 }
 
 bool GetLiveGuestThreadAffinity_nid_no_patch(std::int64_t tid, KernelCpumask& mask) {
@@ -821,7 +824,7 @@ int APS5_VABI scePthreadCreate(Pthread* thread, const PthreadAttr* attr, Pthread
     bool detached = false;
     if (attr && *attr) detached = ((*attr)->_detachstate == DETACH_DETACHED);
     p->_detached = detached;
-    p->stackSize = attr ? (*attr)->_stacksize : DEFAULT_STACK_SIZE;
+    p->stackSize = attr ? (*attr)->_stacksize : GetDefaultStackSize_nid_no_patch();
     if (attr) {
         if ((*attr)->_inheritsched != GUEST_INHERIT_SCHED)
             p->scope = (*attr)->_scope;
@@ -1029,7 +1032,28 @@ Pthread APS5_VABI scePthreadSelf() {
 }
 
 void APS5_VABI scePthreadYield() {
+#ifdef _WIN32
+    thread_local unsigned int spins = 0;
+    thread_local std::uint64_t lastTsc = 0;
+    const auto now = __rdtsc();
+    if (now - lastTsc > 10000) {
+        spins = 0;
+    }
+    lastTsc = now;
+    if (SwitchToThread()) {
+        spins = 0;
+        return;
+    }
+    if (++spins < 512) {
+        _mm_pause();
+        return;
+    }
+    spins = 0;
+    Sleep(1);
+    lastTsc = __rdtsc();
+#else
     std::this_thread::yield();
+#endif
 }
 
 int APS5_VABI scePthreadCancel(Pthread thread) {
@@ -1041,7 +1065,7 @@ int APS5_VABI scePthreadCancel(Pthread thread) {
             if (!thread->cancelWait) return SCE_OK;
             thread->cancelWait->NotifyAll();
         }
-        std::this_thread::yield();
+        scePthreadYield();
     }
 }
 
@@ -1059,6 +1083,16 @@ void APS5_VABI __pthread_cleanup_pop_imp_nid_postfix(int execute) {
     if (!handler) return;
     CurrentGuestState().cleanupHandlers = handler->previous;
     if (execute) handler->routine(handler->argument);
+    if (handler->onHeap) delete handler;
+}
+
+void APS5_VABI pthread_cleanup_push_nid_postfix(void (APS5_VABI* routine)(void*), void* argument) {
+    auto* handler = new CleanupHandler{CurrentGuestState().cleanupHandlers, routine, argument, 1};
+    CurrentGuestState().cleanupHandlers = handler;
+}
+
+void APS5_VABI pthread_cleanup_pop_nid_postfix(int execute) {
+    __pthread_cleanup_pop_imp_nid_postfix(execute);
 }
 
 int APS5_VABI scePthreadEqual(Pthread thread1, Pthread thread2) {

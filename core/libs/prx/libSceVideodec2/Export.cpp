@@ -30,6 +30,8 @@ constexpr std::uint32_t HeightAlignment = 32;
 constexpr std::uint32_t CodecAvc = 1;
 constexpr std::uint32_t CodecHevc = 974921;
 constexpr std::uint32_t CodecVp9 = 2382845;
+constexpr int Videodec2ErrorAccessUnitSize = static_cast<int>(0x811D010Du);
+constexpr int Videodec2ErrorAccessUnitPointer = static_cast<int>(0x811D010Eu);
 
 struct ComputeMemoryInfo {
     std::uint64_t thisSize;
@@ -305,6 +307,8 @@ struct Decoder {
     std::deque<FramePointer> ready;
     std::vector<std::uint8_t> annexB;
     std::vector<std::uint8_t> parameterSets;
+    bool lengthPrefixed = false;
+    bool shortStartCodes = false;
     bool flushing = false;
     std::array<Vp9PictureInfo, 8> vp9References{};
     Vp9PictureInfo vp9Colors{};
@@ -381,21 +385,45 @@ void OpenCodec(Decoder& decoder) {
     }
 }
 
-const std::vector<std::uint8_t>* ToAnnexB(Decoder& decoder, const std::uint8_t* data, std::size_t size) {
-    if (size >= 4 && data[0] == 0 && data[1] == 0 && (data[2] == 1 || (data[2] == 0 && data[3] == 1))) {
-        decoder.annexB.assign(data, data + size);
-        return &decoder.annexB;
-    }
-    decoder.annexB.clear();
+bool TilesAsAvcc(const std::uint8_t* data, std::size_t size) {
+    if (size < 4) return false;
     for (std::size_t index = 0; index < size;) {
-        if (size - index < 4) throw std::runtime_error("Videodec2: truncated NAL length");
+        if (size - index < 4) return false;
         const std::size_t length = (static_cast<std::size_t>(data[index]) << 24u) | (static_cast<std::size_t>(data[index + 1]) << 16u) | (static_cast<std::size_t>(data[index + 2]) << 8u) | data[index + 3];
-        if (length == 0 || length > size - index - 4) throw std::runtime_error("Videodec2: invalid NAL length");
-        static constexpr std::uint8_t startCode[4] = {0, 0, 0, 1};
-        decoder.annexB.insert(decoder.annexB.end(), startCode, startCode + 4);
-        decoder.annexB.insert(decoder.annexB.end(), data + index + 4, data + index + 4 + length);
+        if (length == 0 || length > size - index - 4) return false;
         index += 4 + length;
     }
+    return true;
+}
+
+bool StartsWithStartCode(const std::uint8_t* data, std::size_t size) {
+    return size >= 3 && data[0] == 0 && data[1] == 0 && (data[2] == 1 || (size >= 4 && data[2] == 0 && data[3] == 1));
+}
+
+const std::vector<std::uint8_t>* ToAnnexB(Decoder& decoder, const std::uint8_t* data, std::size_t size) {
+    const bool tiles = TilesAsAvcc(data, size);
+    const bool opensWithStartCode = StartsWithStartCode(data, size);
+    if (!tiles && !opensWithStartCode) throw std::runtime_error("Videodec2: access unit is neither Annex-B nor length-prefixed");
+    const bool shortStartCode = opensWithStartCode && data[2] == 1;
+    bool lengthPrefixed = tiles;
+    if (tiles && opensWithStartCode) {
+        lengthPrefixed = shortStartCode ? !decoder.shortStartCodes : decoder.lengthPrefixed;
+    } else {
+        decoder.lengthPrefixed = tiles;
+        if (shortStartCode) decoder.shortStartCodes = true;
+    }
+    if (lengthPrefixed) {
+        decoder.annexB.clear();
+        for (std::size_t index = 0; index < size;) {
+            const std::size_t length = (static_cast<std::size_t>(data[index]) << 24u) | (static_cast<std::size_t>(data[index + 1]) << 16u) | (static_cast<std::size_t>(data[index + 2]) << 8u) | data[index + 3];
+            static constexpr std::uint8_t startCode[4] = {0, 0, 0, 1};
+            decoder.annexB.insert(decoder.annexB.end(), startCode, startCode + 4);
+            decoder.annexB.insert(decoder.annexB.end(), data + index + 4, data + index + 4 + length);
+            index += 4 + length;
+        }
+        return &decoder.annexB;
+    }
+    decoder.annexB.assign(data, data + size);
     return &decoder.annexB;
 }
 
@@ -472,12 +500,16 @@ bool WriteNv12(Decoder& decoder, const AVFrame& frame, std::uint8_t* target, std
     return sws_scale(decoder.scaler, frame.data, frame.linesize, 0, frame.height, planes, strides) == frame.height;
 }
 
-void EmitDecoded(std::uint64_t handle, Decoder& decoder, FrameBuffer* frame, OutputInfo* output) {
+void ClearOutput(const Decoder& decoder, FrameBuffer* frame, OutputInfo* output) {
     output->isValid = false;
     output->isErrorFrame = false;
     output->pictureCount = 0;
     output->codecType = decoder.codec;
     if (frame) frame->isAccepted = false;
+}
+
+void EmitDecoded(std::uint64_t handle, Decoder& decoder, FrameBuffer* frame, OutputInfo* output) {
+    ClearOutput(decoder, frame, output);
     if (decoder.ready.empty()) return;
     if (!frame || !frame->frameBuffer) throw std::runtime_error("Videodec2: missing output buffer");
     const auto picture = std::move(decoder.ready.front());
@@ -577,6 +609,10 @@ int APS5_VABI sceVideodec2Decode_nid_postfix(std::uint64_t handle, const InputDa
     if (!found) throw std::runtime_error("Videodec2: invalid decoder handle");
     auto& decoder = *found;
     std::lock_guard guard(decoder.mutex);
+    if (!input->auData || input->auSize == 0) {
+        ClearOutput(decoder, frame, output);
+        return input->auData ? Videodec2ErrorAccessUnitSize : Videodec2ErrorAccessUnitPointer;
+    }
     if (Trace() && decoder.decoded < 3) std::fprintf(stderr, "[videodec2] Decode input=%llu frame=%llu output=%llu au=%llu pts=%llu size=%ux%u fb=%p/%llu\n", static_cast<unsigned long long>(input->thisSize), static_cast<unsigned long long>(frame ? frame->thisSize : 0), static_cast<unsigned long long>(output->thisSize), static_cast<unsigned long long>(input->auSize), static_cast<unsigned long long>(input->ptsData), decoder.width, decoder.height, frame ? frame->frameBuffer : nullptr, static_cast<unsigned long long>(frame ? frame->frameBufferSize : 0));
     ++decoder.decoded;
     const Picture picture{input->ptsData, input->dtsData, input->attachedData};
@@ -584,7 +620,7 @@ int APS5_VABI sceVideodec2Decode_nid_postfix(std::uint64_t handle, const InputDa
         avcodec_flush_buffers(decoder.context);
         decoder.flushing = false;
     }
-    if (!input->auData || input->auSize == 0 || input->auSize > static_cast<std::uint64_t>(std::numeric_limits<int>::max())) throw std::runtime_error("Videodec2: invalid access unit");
+    if (input->auSize > static_cast<std::uint64_t>(std::numeric_limits<int>::max())) throw std::runtime_error("Videodec2: invalid access unit");
     if (decoder.codec == CodecVp9) {
         auto references = decoder.vp9References;
         auto colors = decoder.vp9Colors;
@@ -683,7 +719,15 @@ int APS5_VABI sceVideodec2GetPictureInfo_nid_postfix(const OutputInfo* output, A
         if (owner() != handle) continue;
         const auto found = decoder->pictures.find(output->frameBuffer);
         if (found == decoder->pictures.end()) throw std::runtime_error("Videodec2: owned picture is missing");
-        if (decoder->codec != CodecAvc) throw std::runtime_error("Videodec2: picture info is only implemented for H.264");
+        if (decoder->codec == CodecVp9) {
+            auto* info = reinterpret_cast<Vp9PictureInfo*>(first);
+            if (!Fits(info, sizeof(Vp9PictureInfo))) throw std::runtime_error("Videodec2: VP9 picture structure is too small");
+            const auto size = info->thisSize;
+            *info = found->second.vp9;
+            info->thisSize = size;
+            return 0;
+        }
+        if (decoder->codec != CodecAvc) throw std::runtime_error("Videodec2: picture info is only implemented for H.264 and VP9");
         const auto& picture = found->second;
         first->isValid = true;
         first->ptsData = picture.pts;

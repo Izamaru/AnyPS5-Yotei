@@ -1,3 +1,4 @@
+#include "SceTypes.hpp"
 #include "prx/libc/include/general/VabiMacros.hpp"
 #include "prx/libc/include/RemoveTree.hpp"
 #include "prx/libkernel/File/include/FileFlags.hpp"
@@ -16,6 +17,7 @@
 #include <string>
 #ifdef _WIN32
 #include <windows.h>
+#include <winioctl.h>
 #ifndef SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE
 #define SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE 0x2
 #endif
@@ -31,6 +33,7 @@ int APS5_VABI _fstatfs_nid_postfix(int, void*);
 int APS5_VABI open_nid_postfix(const char*, int, int);
 int APS5_VABI close_nid_postfix(int);
 std::int64_t APS5_VABI readlink_nid_postfix(const char*, char*, std::size_t);
+int APS5_VABI lstat_nid_postfix(const char*, FileStat*);
 std::int64_t APS5_VABI pathconf_nid_postfix(const char*, int);
 int APS5_VABI fchdir_nid_postfix(int);
 int APS5_VABI chdir_nid_postfix(const char*);
@@ -55,6 +58,7 @@ int APS5_VABI mkdirat_nid_postfix(int, const char*, std::uint16_t);
 int APS5_VABI renameat_nid_postfix(int, const char*, int, const char*);
 int APS5_VABI fchmodat_nid_postfix(int, const char*, int, int);
 int APS5_VABI fchown_nid_postfix(int, std::uint32_t, std::uint32_t);
+int APS5_VABI fstatat_nid_postfix(int, const char*, FileStat*, int);
 std::int64_t APS5_VABI sceKernelRead(int, void*, std::size_t);
 std::uint16_t APS5_VABI umask_nid_postfix(std::uint16_t);
 int* APS5_VABI __error_nid_postfix();
@@ -296,10 +300,69 @@ int main() {
     Require(readlink_nid_postfix(file.c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
     Require(readlink_nid_postfix(root.string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
     Require(readlink_nid_postfix((root / "missing").string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 2);
+    Require(readlink_nid_postfix((root / "file.txt" / "child").string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 20);
     Require(readlink_nid_postfix("", buffer, sizeof(buffer)) == -1 && Error() == 2);
     Require(readlink_nid_postfix(nullptr, buffer, sizeof(buffer)) == -1 && Error() == 14);
+    constexpr auto hugeSize = static_cast<std::size_t>(-1);
+    Require(readlink_nid_postfix(nullptr, buffer, hugeSize) == -1 && Error() == 22);
+    Require(readlink_nid_postfix("", buffer, hugeSize) == -1 && Error() == 22);
+    Require(readlink_nid_postfix((root / "missing").string().c_str(), buffer, hugeSize) == -1 && Error() == 22);
+    Require(readlinkat_nid_postfix(-100, nullptr, buffer, hugeSize) == -1 && Error() == 22);
+    Require(readlinkat_nid_postfix(-100, "", buffer, hugeSize) == -1 && Error() == 22);
+    Require(readlinkat_nid_postfix(-100, nullptr, buffer, sizeof(buffer)) == -1 && Error() == 14);
 #ifndef _WIN32
     Require(readlink_nid_postfix((root / std::string(300, 'n')).string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 63);
+#else
+    const auto setReparseTag = [](const std::filesystem::path& path, DWORD tag) {
+        const HANDLE handle = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING,
+            FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+        Require(handle != INVALID_HANDLE_VALUE);
+        std::array<std::byte, REPARSE_GUID_DATA_BUFFER_HEADER_SIZE + 4> reparseData{};
+        REPARSE_GUID_DATA_BUFFER reparseHeader{};
+        reparseHeader.ReparseTag = tag;
+        reparseHeader.ReparseDataLength = 4;
+        reparseHeader.ReparseGuid = {0x6a1e3d0b, 0x1f6c, 0x4c1e, {0x9b, 0x52, 0x3d, 0x8e, 0x41, 0x07, 0x5c, 0x2a}};
+        std::memcpy(reparseData.data(), &reparseHeader, REPARSE_GUID_DATA_BUFFER_HEADER_SIZE);
+        DWORD returned = 0;
+        const bool set = DeviceIoControl(handle, FSCTL_SET_REPARSE_POINT, reparseData.data(), static_cast<DWORD>(reparseData.size()),
+            nullptr, 0, &returned, nullptr) != 0;
+        if (!set) Require(GetLastError() == ERROR_PRIVILEGE_NOT_HELD || GetLastError() == ERROR_ACCESS_DENIED);
+        Require(CloseHandle(handle) != 0);
+        if (!set) {
+            Require(std::filesystem::remove(path));
+            std::fprintf(stderr, "Windows reparse point checks skipped: setting a reparse point on a file needs rights this user lacks\n");
+            return false;
+        }
+        Require((GetFileAttributesW(path.c_str()) & FILE_ATTRIBUTE_REPARSE_POINT) != 0);
+        return true;
+    };
+    const auto clearReparseTag = [](const std::filesystem::path& path, DWORD tag) {
+        const HANDLE handle = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING,
+            FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+        Require(handle != INVALID_HANDLE_VALUE);
+        REPARSE_GUID_DATA_BUFFER reparseHeader{};
+        reparseHeader.ReparseTag = tag;
+        reparseHeader.ReparseGuid = {0x6a1e3d0b, 0x1f6c, 0x4c1e, {0x9b, 0x52, 0x3d, 0x8e, 0x41, 0x07, 0x5c, 0x2a}};
+        DWORD returned = 0;
+        Require(DeviceIoControl(handle, FSCTL_DELETE_REPARSE_POINT, &reparseHeader, REPARSE_GUID_DATA_BUFFER_HEADER_SIZE,
+            nullptr, 0, &returned, nullptr) != 0);
+        Require(CloseHandle(handle) != 0 && std::filesystem::remove(path));
+    };
+    const auto tagged = root / "tagged.bin";
+    std::ofstream(tagged, std::ios::binary) << "abc";
+    if (setReparseTag(tagged, 0x00000ABC)) {
+        Require(readlink_nid_postfix(tagged.string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
+        clearReparseTag(tagged, 0x00000ABC);
+    }
+    const auto surrogate = root / "surrogate.bin";
+    std::ofstream(surrogate, std::ios::binary) << "abc";
+    if (setReparseTag(surrogate, 0x20000ABC)) {
+        Require(readlink_nid_postfix(surrogate.string().c_str(), buffer, sizeof(buffer)) == -1 && Error() == 22);
+        FileStat surrogateStatus{};
+        Require(lstat_nid_postfix(surrogate.string().c_str(), &surrogateStatus) == 0);
+        Require(surrogateStatus.st_mode == 0100666 && surrogateStatus.st_nlink == 1);
+        clearReparseTag(surrogate, 0x20000ABC);
+    }
 #endif
     std::error_code error;
     const auto link = (root / "link").string();
@@ -385,6 +448,12 @@ int main() {
     Require(chroot_nid_postfix((root / "file.txt" / "..").string().c_str()) == -1 && Error() == 20);
     Require(chroot_nid_postfix((root / std::string(256, 'n')).string().c_str()) == -1 && Error() == 63);
     Require(chroot_nid_postfix(("/" + std::string(1024, 'p')).c_str()) == -1 && Error() == 63);
+    const std::string throughFile = (root / "file.txt" / "child").string();
+    Require(pathconf_nid_postfix(throughFile.c_str(), 4) == -1 && Error() == 20);
+    Require(fchmodat_nid_postfix(-100, throughFile.c_str(), 0600, 0) == -1 && Error() == 20);
+    Require(symlink_nid_postfix("target", throughFile.c_str()) == -1 && Error() == 20);
+    Require(link_nid_postfix(file.c_str(), throughFile.c_str()) == -1 && Error() == 20);
+    Require(link_nid_postfix(throughFile.c_str(), (root / "linked").string().c_str()) == -1 && Error() == 20);
     Require(ChrootThrows(root.string()));
     Require(ChrootThrows("/" + root.filename().string() + "/."));
     const auto guestRoot = "/" + root.filename().string();
@@ -495,6 +564,7 @@ int main() {
     Require(openat_nid_postfix(plain, "file.txt", SCE_KERNEL_O_RDONLY) == -1 && Error() == 20);
     Require(readlinkat_nid_postfix(base, "file.txt", buffer, sizeof(buffer)) == -1 && Error() == 22);
     Require(readlinkat_nid_postfix(base, "missing.bin", buffer, sizeof(buffer)) == -1 && Error() == 2);
+    Require(readlinkat_nid_postfix(base, "file.txt/child", buffer, sizeof(buffer)) == -1 && Error() == 20);
     Require(readlinkat_nid_postfix(plain, "file.txt", buffer, sizeof(buffer)) == -1 && Error() == 20);
     Require(readlinkat_nid_postfix(-1, "file.txt", buffer, sizeof(buffer)) == -1 && Error() == 9);
     Require(readlinkat_nid_postfix(base, nullptr, buffer, sizeof(buffer)) == -1 && Error() == 14);
@@ -635,6 +705,29 @@ int main() {
     fchownThrew = false;
     try { fchown_nid_postfix(base, 0, 1); } catch (const std::exception&) { fchownThrew = true; }
     Require(fchownThrew);
+    FileStat stat{};
+    Require(fstatat_nid_postfix(base, "file.txt", &stat, 0) == 0 && (stat.st_mode & 0170000) == 0100000 && stat.st_size == 1);
+    Require(fstatat_nid_postfix(base, "other_dir", &stat, 0) == 0 && (stat.st_mode & 0170000) == 0040000);
+    Require(fstatat_nid_postfix(base, "other_dir/", &stat, 0) == 0 && (stat.st_mode & 0170000) == 0040000);
+    Require(fstatat_nid_postfix(base, "file.txt/", &stat, 0) == -1 && Error() == 20);
+    Require(fstatat_nid_postfix(base, "file.txt", &stat, 0x0200) == 0 && (stat.st_mode & 0170000) == 0100000);
+    Require(fstatat_nid_postfix(-100, file.c_str(), &stat, 0) == 0 && stat.st_size == 1);
+    Require(fstatat_nid_postfix(-1, guestFile.c_str(), &stat, 0) == 0 && stat.st_size == 1);
+    Require(fstatat_nid_postfix(base, "missing.bin", &stat, 0) == -1 && Error() == 2);
+    Require(fstatat_nid_postfix(base, "missing.bin", &stat, 0x0200) == -1 && Error() == 2);
+    Require(fstatat_nid_postfix(base, nullptr, &stat, 0) == -1 && Error() == 14);
+    Require(fstatat_nid_postfix(base, "", &stat, 0) == -1 && Error() == 2);
+    Require(fstatat_nid_postfix(base, "file.txt", &stat, 0x4000) == -1 && Error() == 22);
+    Require(fstatat_nid_postfix(-1, "file.txt", &stat, 0) == -1 && Error() == 9);
+    const int notDirectory = sceKernelOpen(file.c_str(), SCE_KERNEL_O_RDONLY, 0);
+    Require(notDirectory >= 0);
+    Require(fstatat_nid_postfix(notDirectory, "file.txt", &stat, 0) == -1 && Error() == 20);
+    Require(sceKernelClose(notDirectory) == 0);
+#ifndef _WIN32
+    Require(symlink_nid_postfix("file.txt", (root / "link.txt").string().c_str()) == 0);
+    Require(fstatat_nid_postfix(base, "link.txt", &stat, 0) == 0 && (stat.st_mode & 0170000) == 0100000 && stat.st_size == 1);
+    Require(fstatat_nid_postfix(base, "link.txt", &stat, 0x0200) == 0 && (stat.st_mode & 0170000) == 0120000);
+#endif
     Require(sceKernelClose(base) == 0);
 #ifdef _WIN32
     const auto junctionTarget = root / "junction-target";

@@ -38,9 +38,10 @@ int APS5_VABI _ZN3sce2Np9CppWebApi12Leaderboards2V121GetRankingRequestBody9setOf
  return 0;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi12Leaderboards2V122GetRankingResponseBody10getEntriesEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi12Leaderboards2V122GetRankingResponseBody10getEntriesEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi12Leaderboards2V122RecordScoreRequestBody10setCommentEPKc() {
@@ -498,19 +499,22 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_12Leader
     return 0;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEE3endEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEE3endEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEE5beginEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEE5beginEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEppEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEppEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi6Common9terminateERNS2_10LibContextE(uint64_t* context) {
@@ -518,164 +522,196 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common9terminateERNS2_10LibContextE(uint64_t*
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V122GetRankingResponseBody22getLastUpdatedDateTimeEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const void* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V122GetRankingResponseBody22getLastUpdatedDateTimeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V123RecordScoreResponseBody10getTmpRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V123RecordScoreResponseBody10getTmpRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V123RecordScoreResponseBody16getTmpSerialRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V123RecordScoreResponseBody16getTmpSerialRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody11getSortModeEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody11getSortModeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13getEntryLimitEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13getEntryLimitEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13getUpdateModeEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13getUpdateModeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13sortModeIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody13sortModeIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody15entryLimitIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody15entryLimitIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody15updateModeIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody15updateModeIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody16getMaxScoreLimitEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::int64_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody16getMaxScoreLimitEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody16getMinScoreLimitEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::int64_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody16getMinScoreLimitEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody18maxScoreLimitIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody18maxScoreLimitIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody18minScoreLimitIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody18minScoreLimitIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody20getLargeDataNumLimitEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody20getLargeDataNumLimitEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody21getLargeDataSizeLimitEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::size_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody21getLargeDataSizeLimitEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody22largeDataNumLimitIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody22largeDataNumLimitIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody23largeDataSizeLimitIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V130GetBoardDefinitionResponseBody23largeDataSizeLimitIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry10getCommentEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry10getCommentEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry11getObjectIdEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry11getObjectIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry11getOnlineIdEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry11getOnlineIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12commentIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12commentIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12getAccountIdEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint64_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12getAccountIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12getSmallDataEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const void* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry12getSmallDataEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry13getSerialRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry13getSerialRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry13objectIdIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry13objectIdIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry14getHighestRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry14getHighestRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry14smallDataIsSetEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry14smallDataIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry20getHighestSerialRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry20getHighestSerialRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry7getPcIdEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry7getPcIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry7getRankEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry7getRankEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry8getScoreEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::int64_t APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V15Entry8getScoreEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V19RecordApi26RecordScoreResponseHeaders24getXPsnAtomicOperationIdEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi12Leaderboards2V19RecordApi26RecordScoreResponseHeaders24getXPsnAtomicOperationIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
 int APS5_VABI _ZNK3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_12Leaderboards2V122GetRankingResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEE11getResponseERS8_() {
@@ -734,28 +770,33 @@ int APS5_VABI _ZNK3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrIN
  return SCE_NP_WEBAPI_ERROR_NOT_SIGNED_IN;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common6Binary4sizeEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+std::size_t APS5_VABI _ZNK3sce2Np9CppWebApi6Common6Binary4sizeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common6Binary9getBinaryEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+const void* APS5_VABI _ZNK3sce2Np9CppWebApi6Common6Binary9getBinaryEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
 const char* APS5_VABI _ZNK3sce2Np9CppWebApi6Common6String5c_strEv(const CommonString* self) {
     return self->buffer != nullptr ? self->buffer : "";
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEdeEv() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+void* APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEdeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEneERKS9_() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_12Leaderboards2V15EntryEEEEneERKS9_(const void* self, const void* other) {
+    (void)self;
+    (void)other;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
 // Shared vector bodies. A Vector handle is an IntrusivePtr whose object is a body;
@@ -872,18 +913,20 @@ int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V139RequestPlayerSessionMembe
     return SCE_NP_WEBAPI_ERROR_NOT_SIGNED_IN;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEE3endEv() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEE3endEv(void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi36ParameterToJoinPlayerSessionAsPlayerD1Ev() {
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V110FromMember11getOnlineIdEv() {
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V110FromMember11getOnlineIdEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi38ParameterToGetPlayerSessionInvitations26setinvitationInvalidFilterEPKc() {
@@ -963,9 +1006,10 @@ void APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_6StringEED1Ev(IntrusivePtr
     ReleaseIntrusivePtr(self, 0x30, __func__);
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEE5beginEv() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEE5beginEv(void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_14SessionManager2V129PostPlayerSessionsRequestBodyEEC1Ev(IntrusivePtr* self) {
@@ -1071,23 +1115,26 @@ void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_14SessionManager2V1
     *self = {};
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead12getSessionIdEv() {
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead12getSessionIdEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead7getFromEv() {
+void* APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead7getFromEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_14SessionManager2V129PostPlayerSessionsRequestBodyEEC1ERS7_(IntrusivePtr* self, const IntrusivePtr* source) {
     CopyIntrusivePtr(self, source, 0x00);
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V130PostPlayerSessionsResponseBody17getPlayerSessionsEv() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V130PostPlayerSessionsResponseBody17getPlayerSessionsEv(void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi18leavePlayerSessionEiRKNS4_29ParameterToLeavePlayerSessionERNS1_6Common11TransactionINS8_15DefaultResponseENS8_12IntrusivePtrINS8_18ResponseHeaderBaseEEEEE() {
@@ -1146,9 +1193,10 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14Sessio
     return VectorPushBackIntrusivePtr(self, static_cast<const IntrusivePtr*>(element));
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEppEv() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEppEv(void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_14SessionManager2V152PostPlayerSessionsSessionIdMemberPlayersResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEEC1Ev(void* self) {
@@ -1180,14 +1228,16 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead14sessionIdIsSetEv() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead14sessionIdIsSetEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead17invitationIdIsSetEv() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead17invitationIdIsSetEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS1_14SessionManager2V154GetUsersAccountIdPlayerSessionsInvitationsResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEE5startEPNS2_10LibContextE() {
@@ -1202,14 +1252,17 @@ int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi36Parame
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V154GetUsersAccountIdPlayerSessionsInvitationsResponseBody16invitationsIsSetEv() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V154GetUsersAccountIdPlayerSessionsInvitationsResponseBody16invitationsIsSetEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V113PlayerSessionEEEEixEm() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_14SessionManager2V113PlayerSessionEEEEixEm(void* self, std::uint64_t index) {
+    (void)self;
+    (void)index;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi29ParameterToLeavePlayerSession10initializeEPNS1_6Common10LibContextEPKcSA_() {
@@ -1224,9 +1277,10 @@ void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS2_6String
     CopyIntrusivePtr(self, source, 0x30);
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEdeEv() {
+void* APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEdeEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi38ParameterToGetPlayerSessionInvitations9setfieldsENS1_6Common12IntrusivePtrINS6_6VectorINS6_6StringEEEEE() {
@@ -1262,9 +1316,10 @@ int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi36Parame
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead9fromIsSetEv() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead9fromIsSetEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V126RequestPlayerSessionPlayer15setPushContextsERKNS1_6Common6VectorINS5_12IntrusivePtrINS3_24PlayerSessionPushContextEEEEE() {
@@ -1305,9 +1360,11 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_6StringEE8pushBackERKS4_(In
     return VectorPushBackString(self, static_cast<const CommonString*>(element));
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEneERKS9_() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_14SessionManager2V136UsersPlayerSessionsInvitationForReadEEEEneERKS9_(const void* self, const void* other) {
+    (void)self;
+    (void)other;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V117PlayerSessionsApi38ParameterToGetPlayerSessionInvitations10initializeEPNS1_6Common10LibContextEPKc() {
@@ -1326,9 +1383,10 @@ void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS2_6String
     ReleaseIntrusivePtr(self, 0x30, __func__);
 }
 
-int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V154GetUsersAccountIdPlayerSessionsInvitationsResponseBody14getInvitationsEv() {
+void* APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V154GetUsersAccountIdPlayerSessionsInvitationsResponseBody14getInvitationsEv(void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_14SessionManager2V132RequestCreatePlayerSessionPlayerEEC1Ev(IntrusivePtr* self) {
@@ -1347,9 +1405,10 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_15DefaultResponse
     return 0;
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead22receivedTimestampIsSetEv() {
+bool APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V136UsersPlayerSessionsInvitationForRead22receivedTimestampIsSetEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return false;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_14SessionManager2V130PostPlayerSessionsResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEED1Ev(void* self) {
@@ -1401,9 +1460,10 @@ void APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_14SessionManager2V1
     *self = {};
 }
 
-int APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V113PlayerSession12getSessionIdEv() {
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi14SessionManager2V113PlayerSession12getSessionIdEv(const void* self) {
+    (void)self;
     NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return nullptr;
 }
 
 int APS5_VABI _ZN3sce2Np9CppWebApi14SessionManager2V158PostPlayerSessionsSessionIdMemberPlayersRequestBodyFactory6createEPNS1_6Common10LibContextERKNS5_6VectorINS5_12IntrusivePtrINS3_26RequestPlayerSessionPlayerEEEEEPNS9_INS3_51PostPlayerSessionsSessionIdMemberPlayersRequestBodyEEE() {
@@ -1427,441 +1487,407 @@ int APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_15DefaultResponseENS2
     return 0;
 }
 
-APS5_EXPORT("+gSMGXHgrPU", sceNpCppWebApiUnknown00);
-int APS5_VABI sceNpCppWebApiUnknown00(void) {
-    NotImplemented_nid_no_patch("+gSMGXHgrPU");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common13ConstIteratorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEED2Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("-XNfwZTFkWw", sceNpCppWebApiUnknown01);
-int APS5_VABI sceNpCppWebApiUnknown01(void) {
-    NotImplemented_nid_no_patch("-XNfwZTFkWw");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common13ConstIteratorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEED2Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("0f5+eBcgB14", sceNpCppWebApiUnknown02);
-int APS5_VABI sceNpCppWebApiUnknown02(void) {
-    NotImplemented_nid_no_patch("0f5+eBcgB14");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V59ContainerEEEEEEC1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("1iq5Jtw4jVs", sceNpCppWebApiUnknown03);
-int APS5_VABI sceNpCppWebApiUnknown03(void) {
-    NotImplemented_nid_no_patch("1iq5Jtw4jVs");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V59ContainerEEEEEEdeEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("1wpCXuFzH10", sceNpCppWebApiUnknown04);
-int APS5_VABI sceNpCppWebApiUnknown04(void) {
-    NotImplemented_nid_no_patch("1wpCXuFzH10");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V59ContainerEEEEEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("4AFThLW28xQ", sceNpCppWebApiUnknown05);
-int APS5_VABI sceNpCppWebApiUnknown05(void) {
-    NotImplemented_nid_no_patch("4AFThLW28xQ");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V59ContainerEEEEEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("8-9Y4oS+OuE", sceNpCppWebApiUnknown06);
-int APS5_VABI sceNpCppWebApiUnknown06(void) {
-    NotImplemented_nid_no_patch("8-9Y4oS+OuE");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V57ProductEEEEEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("8dWkWjo5EeE", sceNpCppWebApiUnknown07);
-int APS5_VABI sceNpCppWebApiUnknown07(void) {
-    NotImplemented_nid_no_patch("8dWkWjo5EeE");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V57ProductEEEEEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("BHvfIGdarBQ", sceNpCppWebApiUnknown08);
-int APS5_VABI sceNpCppWebApiUnknown08(void) {
-    NotImplemented_nid_no_patch("BHvfIGdarBQ");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V53SkuEEEEEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("Fxxr5lYBfl4", sceNpCppWebApiUnknown09);
-int APS5_VABI sceNpCppWebApiUnknown09(void) {
-    NotImplemented_nid_no_patch("Fxxr5lYBfl4");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_13InGameCatalog2V53SkuEEEEEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("M1LnjRscx-w", sceNpCppWebApiUnknown10);
-int APS5_VABI sceNpCppWebApiUnknown10(void) {
-    NotImplemented_nid_no_patch("M1LnjRscx-w");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_17TitleCloudStorage2V110DataStatusEEEEEEdeEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("PsX657reZeo", sceNpCppWebApiUnknown11);
-int APS5_VABI sceNpCppWebApiUnknown11(void) {
-    NotImplemented_nid_no_patch("PsX657reZeo");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS2_6VectorINS3_INS1_17TitleCloudStorage2V110DataStatusEEEEEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("RvH9AZ5rCkQ", sceNpCppWebApiUnknown12);
-int APS5_VABI sceNpCppWebApiUnknown12(void) {
-    NotImplemented_nid_no_patch("RvH9AZ5rCkQ");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V59ContainerEEC1ERS7_(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("SR3BKonD8yk", sceNpCppWebApiUnknown13);
-int APS5_VABI sceNpCppWebApiUnknown13(void) {
-    NotImplemented_nid_no_patch("SR3BKonD8yk");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V59ContainerEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("TSoQhYKyq5g", sceNpCppWebApiUnknown14);
-int APS5_VABI sceNpCppWebApiUnknown14(void) {
-    NotImplemented_nid_no_patch("TSoQhYKyq5g");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V59ContainerEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("TgsJjQqp+2k", sceNpCppWebApiUnknown15);
-int APS5_VABI sceNpCppWebApiUnknown15(void) {
-    NotImplemented_nid_no_patch("TgsJjQqp+2k");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V57ProductEEC1ERS7_(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("UHQxE3HhTXA", sceNpCppWebApiUnknown16);
-int APS5_VABI sceNpCppWebApiUnknown16(void) {
-    NotImplemented_nid_no_patch("UHQxE3HhTXA");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V57ProductEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("ZN-glpk0Rug", sceNpCppWebApiUnknown17);
-int APS5_VABI sceNpCppWebApiUnknown17(void) {
-    NotImplemented_nid_no_patch("ZN-glpk0Rug");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_13InGameCatalog2V57ProductEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("ZQzXwokCnUE", sceNpCppWebApiUnknown18);
-int APS5_VABI sceNpCppWebApiUnknown18(void) {
-    NotImplemented_nid_no_patch("ZQzXwokCnUE");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("ZwjmbSr4Cxc", sceNpCppWebApiUnknown19);
-int APS5_VABI sceNpCppWebApiUnknown19(void) {
-    NotImplemented_nid_no_patch("ZwjmbSr4Cxc");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEC1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("b7leY-LNVnI", sceNpCppWebApiUnknown20);
-int APS5_VABI sceNpCppWebApiUnknown20(void) {
-    NotImplemented_nid_no_patch("b7leY-LNVnI");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("c3J9K9XbQqE", sceNpCppWebApiUnknown21);
-int APS5_VABI sceNpCppWebApiUnknown21(void) {
-    NotImplemented_nid_no_patch("c3J9K9XbQqE");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("cSLbQUQO2Ns", sceNpCppWebApiUnknown22);
-int APS5_VABI sceNpCppWebApiUnknown22(void) {
-    NotImplemented_nid_no_patch("cSLbQUQO2Ns");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V15OwnerEEptEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("cqOxjL0ZfFA", sceNpCppWebApiUnknown23);
-int APS5_VABI sceNpCppWebApiUnknown23(void) {
-    NotImplemented_nid_no_patch("cqOxjL0ZfFA");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common12IntrusivePtrINS1_17TitleCloudStorage2V15OwnerEED1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("d1eEjWR60wk", sceNpCppWebApiUnknown24);
-int APS5_VABI sceNpCppWebApiUnknown24(void) {
-    NotImplemented_nid_no_patch("d1eEjWR60wk");
-    return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEEneERKS9_(const void* self, const void* other) {
+    (void)self;
+    (void)other;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-APS5_EXPORT("epwr+cBCIFs", sceNpCppWebApiUnknown25);
-int APS5_VABI sceNpCppWebApiUnknown25(void) {
-    NotImplemented_nid_no_patch("epwr+cBCIFs");
-    return 0;
+void* APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEEdeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("eruduJ0KrT0", sceNpCppWebApiUnknown26);
-int APS5_VABI sceNpCppWebApiUnknown26(void) {
-    NotImplemented_nid_no_patch("eruduJ0KrT0");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEEppEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("fG06a38iao8", sceNpCppWebApiUnknown27);
-int APS5_VABI sceNpCppWebApiUnknown27(void) {
-    NotImplemented_nid_no_patch("fG06a38iao8");
-    return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEEneERKS9_(const void* self, const void* other) {
+    (void)self;
+    (void)other;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-APS5_EXPORT("jfpSx14AeLc", sceNpCppWebApiUnknown28);
-int APS5_VABI sceNpCppWebApiUnknown28(void) {
-    NotImplemented_nid_no_patch("jfpSx14AeLc");
-    return 0;
+void* APS5_VABI _ZNK3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEEdeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("kBxwE4YfbIM", sceNpCppWebApiUnknown29);
-int APS5_VABI sceNpCppWebApiUnknown29(void) {
-    NotImplemented_nid_no_patch("kBxwE4YfbIM");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common8IteratorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEEppEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("kz2Z38yTLq0", sceNpCppWebApiUnknown30);
-int APS5_VABI sceNpCppWebApiUnknown30(void) {
-    NotImplemented_nid_no_patch("kz2Z38yTLq0");
-    return 0;
+void APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS2_6VectorINS4_INS1_13InGameCatalog2V59ContainerEEEEEEENS4_INS2_18ResponseHeaderBaseEEEEC1Ev(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
 }
 
-APS5_EXPORT("lB8driFKaoU", sceNpCppWebApiUnknown31);
-int APS5_VABI sceNpCppWebApiUnknown31(void) {
-    NotImplemented_nid_no_patch("lB8driFKaoU");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS2_6VectorINS4_INS1_13InGameCatalog2V59ContainerEEEEEEENS4_INS2_18ResponseHeaderBaseEEEE11getResponseERSB_(const void* self, void* response) {
+    (void)self;
+    (void)response;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("mCsV7izOkjY", sceNpCppWebApiUnknown32);
-int APS5_VABI sceNpCppWebApiUnknown32(void) {
-    NotImplemented_nid_no_patch("mCsV7izOkjY");
-    return 0;
+void APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS2_6VectorINS4_INS1_13InGameCatalog2V59ContainerEEEEEEENS4_INS2_18ResponseHeaderBaseEEEED1Ev(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
 }
 
-APS5_EXPORT("n1yCLMxpseQ", sceNpCppWebApiUnknown33);
-int APS5_VABI sceNpCppWebApiUnknown33(void) {
-    NotImplemented_nid_no_patch("n1yCLMxpseQ");
-    return 0;
+void APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEEC1Ev(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
 }
 
-APS5_EXPORT("nL9vSVq-29s", sceNpCppWebApiUnknown34);
-int APS5_VABI sceNpCppWebApiUnknown34(void) {
-    NotImplemented_nid_no_patch("nL9vSVq-29s");
+int APS5_VABI _ZNK3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEE11getResponseERS8_(const void* self, void* response) {
+    (void)self;
+    (void)response;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("nmz5JYKcMfY", sceNpCppWebApiUnknown35);
-int APS5_VABI sceNpCppWebApiUnknown35(void) {
-    NotImplemented_nid_no_patch("nmz5JYKcMfY");
-    return 0;
+void APS5_VABI _ZN3sce2Np9CppWebApi6Common11TransactionINS2_12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEED1Ev(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
 }
 
-APS5_EXPORT("oHRl7a+zdMU", sceNpCppWebApiUnknown36);
-int APS5_VABI sceNpCppWebApiUnknown36(void) {
-    NotImplemented_nid_no_patch("oHRl7a+zdMU");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS2_6VectorINS4_INS1_13InGameCatalog2V59ContainerEEEEEEENS4_INS2_18ResponseHeaderBaseEEEE6finishEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("pSpO3hPNv64", sceNpCppWebApiUnknown37);
-int APS5_VABI sceNpCppWebApiUnknown37(void) {
-    NotImplemented_nid_no_patch("pSpO3hPNv64");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS2_6VectorINS4_INS1_13InGameCatalog2V59ContainerEEEEEEENS4_INS2_18ResponseHeaderBaseEEEE5startEPNS2_10LibContextE(void* self, void* context) {
+    (void)self;
+    (void)context;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("q4UFICay6Hk", sceNpCppWebApiUnknown38);
-int APS5_VABI sceNpCppWebApiUnknown38(void) {
-    NotImplemented_nid_no_patch("q4UFICay6Hk");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEE6finishEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("qiD2PU2Jstc", sceNpCppWebApiUnknown39);
-int APS5_VABI sceNpCppWebApiUnknown39(void) {
-    NotImplemented_nid_no_patch("qiD2PU2Jstc");
+int APS5_VABI _ZN3sce2Np9CppWebApi6Common15TransactionBaseINS2_12IntrusivePtrINS1_17TitleCloudStorage2V132GetMultiDataStatusesResponseBodyEEENS4_INS2_18ResponseHeaderBaseEEEE5startEPNS2_10LibContextE(void* self, void* context) {
+    (void)self;
+    (void)context;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("tFe964qzGEM", sceNpCppWebApiUnknown40);
-int APS5_VABI sceNpCppWebApiUnknown40(void) {
-    NotImplemented_nid_no_patch("tFe964qzGEM");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_13InGameCatalog2V59ContainerEEEEixEm(void* self, std::uint64_t index) {
+    (void)self;
+    (void)index;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("tHaO36kincQ", sceNpCppWebApiUnknown41);
-int APS5_VABI sceNpCppWebApiUnknown41(void) {
-    NotImplemented_nid_no_patch("tHaO36kincQ");
+std::size_t APS5_VABI _ZNK3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_13InGameCatalog2V59ContainerEEEE4sizeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("umm5m+mXiZs", sceNpCppWebApiUnknown42);
-int APS5_VABI sceNpCppWebApiUnknown42(void) {
-    NotImplemented_nid_no_patch("umm5m+mXiZs");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEE5beginEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("uwhztB49KOQ", sceNpCppWebApiUnknown43);
-int APS5_VABI sceNpCppWebApiUnknown43(void) {
-    NotImplemented_nid_no_patch("uwhztB49KOQ");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_13InGameCatalog2V57ProductEEEE3endEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("w4K4nTYwhVE", sceNpCppWebApiUnknown44);
-int APS5_VABI sceNpCppWebApiUnknown44(void) {
-    NotImplemented_nid_no_patch("w4K4nTYwhVE");
+std::size_t APS5_VABI _ZNK3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_13InGameCatalog2V53SkuEEEE4sizeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("wFcm6bgWB9Q", sceNpCppWebApiUnknown45);
-int APS5_VABI sceNpCppWebApiUnknown45(void) {
-    NotImplemented_nid_no_patch("wFcm6bgWB9Q");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEE5beginEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("wp8+c84G5Xw", sceNpCppWebApiUnknown46);
-int APS5_VABI sceNpCppWebApiUnknown46(void) {
-    NotImplemented_nid_no_patch("wp8+c84G5Xw");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi6Common6VectorINS2_12IntrusivePtrINS1_17TitleCloudStorage2V110DataStatusEEEE3endEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("zjqTmP0ST9A", sceNpCppWebApiUnknown47);
-int APS5_VABI sceNpCppWebApiUnknown47(void) {
-    NotImplemented_nid_no_patch("zjqTmP0ST9A");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V59Container11getChildrenEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("zzO8ZGJ74ng", sceNpCppWebApiUnknown48);
-int APS5_VABI sceNpCppWebApiUnknown48(void) {
-    NotImplemented_nid_no_patch("zzO8ZGJ74ng");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainerC1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("12wY179+CE8", sceNpCppWebApiUnknown49);
-int APS5_VABI sceNpCppWebApiUnknown49(void) {
-    NotImplemented_nid_no_patch("12wY179+CE8");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainer10initializeEPNS1_6Common10LibContextE(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("3bjEFf8OhTs", sceNpCppWebApiUnknown50);
-int APS5_VABI sceNpCppWebApiUnknown50(void) {
-    NotImplemented_nid_no_patch("3bjEFf8OhTs");
-    return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainer13isInitializedEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-APS5_EXPORT("6FK4IOnANkc", sceNpCppWebApiUnknown51);
-int APS5_VABI sceNpCppWebApiUnknown51(void) {
-    NotImplemented_nid_no_patch("6FK4IOnANkc");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainer15setserviceLabelEi(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("EJAOHYWUki4", sceNpCppWebApiUnknown52);
-int APS5_VABI sceNpCppWebApiUnknown52(void) {
-    NotImplemented_nid_no_patch("EJAOHYWUki4");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainer9terminateEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("FlagLhjAEmc", sceNpCppWebApiUnknown53);
-int APS5_VABI sceNpCppWebApiUnknown53(void) {
-    NotImplemented_nid_no_patch("FlagLhjAEmc");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi23ParameterToGetContainerD1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("G3h-NDHnyW4", sceNpCppWebApiUnknown54);
-int APS5_VABI sceNpCppWebApiUnknown54(void) {
-    NotImplemented_nid_no_patch("G3h-NDHnyW4");
+int APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V512ContainerApi12getContainerEiRKNS4_23ParameterToGetContainerERNS1_6Common11TransactionINS8_12IntrusivePtrINS8_6VectorINSA_INS3_9ContainerEEEEEEENSA_INS8_18ResponseHeaderBaseEEEEE(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("H0XjNhflED4", sceNpCppWebApiUnknown55);
-int APS5_VABI sceNpCppWebApiUnknown55(void) {
-    NotImplemented_nid_no_patch("H0XjNhflED4");
-    return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi13InGameCatalog2V57Product8getLabelEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("IbWx007Acn4", sceNpCppWebApiUnknown56);
-int APS5_VABI sceNpCppWebApiUnknown56(void) {
-    NotImplemented_nid_no_patch("IbWx007Acn4");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi13InGameCatalog2V57Product7getSkusEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("Is+nI7Hq9jU", sceNpCppWebApiUnknown57);
-int APS5_VABI sceNpCppWebApiUnknown57(void) {
-    NotImplemented_nid_no_patch("Is+nI7Hq9jU");
+int APS5_VABI _ZNK3sce2Np9CppWebApi13InGameCatalog2V57Product7getTypeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("Kc4x2uy0FFk", sceNpCppWebApiUnknown58);
-int APS5_VABI sceNpCppWebApiUnknown58(void) {
-    NotImplemented_nid_no_patch("Kc4x2uy0FFk");
-    return 0;
+bool APS5_VABI _ZNK3sce2Np9CppWebApi13InGameCatalog2V57Product9skusIsSetEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return false;
 }
 
-APS5_EXPORT("OK+Ggpve7B0", sceNpCppWebApiUnknown59);
-int APS5_VABI sceNpCppWebApiUnknown59(void) {
-    NotImplemented_nid_no_patch("OK+Ggpve7B0");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi23ParameterToDownloadData11setobjectIdEPKc(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("P3daBLFFREw", sceNpCppWebApiUnknown60);
-int APS5_VABI sceNpCppWebApiUnknown60(void) {
-    NotImplemented_nid_no_patch("P3daBLFFREw");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi37ParameterToGetMultiDataStatusesByUserC1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("RZcseJ3THfY", sceNpCppWebApiUnknown61);
-int APS5_VABI sceNpCppWebApiUnknown61(void) {
-    NotImplemented_nid_no_patch("RZcseJ3THfY");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi37ParameterToGetMultiDataStatusesByUser10initializeEPNS1_6Common10LibContextEPKcSA_(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("RbvteD35X-8", sceNpCppWebApiUnknown62);
-int APS5_VABI sceNpCppWebApiUnknown62(void) {
-    NotImplemented_nid_no_patch("RbvteD35X-8");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi37ParameterToGetMultiDataStatusesByUser9setfieldsEPKc(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("XCtf+23QT0k", sceNpCppWebApiUnknown63);
-int APS5_VABI sceNpCppWebApiUnknown63(void) {
-    NotImplemented_nid_no_patch("XCtf+23QT0k");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi37ParameterToGetMultiDataStatusesByUser9terminateEv(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("a4q15LI1a4E", sceNpCppWebApiUnknown64);
-int APS5_VABI sceNpCppWebApiUnknown64(void) {
-    NotImplemented_nid_no_patch("a4q15LI1a4E");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi37ParameterToGetMultiDataStatusesByUserD1Ev(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("eT4TQB7OsLA", sceNpCppWebApiUnknown65);
-int APS5_VABI sceNpCppWebApiUnknown65(void) {
-    NotImplemented_nid_no_patch("eT4TQB7OsLA");
+int APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V17DataApi26getMultiDataStatusesByUserEiRKNS4_37ParameterToGetMultiDataStatusesByUserERNS1_6Common11TransactionINS8_12IntrusivePtrINS3_32GetMultiDataStatusesResponseBodyEEENSA_INS8_18ResponseHeaderBaseEEEEE(void) {
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("g2dEqFnhFuw", sceNpCppWebApiUnknown66);
-int APS5_VABI sceNpCppWebApiUnknown66(void) {
-    NotImplemented_nid_no_patch("g2dEqFnhFuw");
+std::size_t APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V110DataStatus11getDataSizeEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("lPAMjFZEpt8", sceNpCppWebApiUnknown67);
-int APS5_VABI sceNpCppWebApiUnknown67(void) {
-    NotImplemented_nid_no_patch("lPAMjFZEpt8");
-    return 0;
+const char* APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V110DataStatus11getObjectIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("mBagn+lW-iM", sceNpCppWebApiUnknown68);
-int APS5_VABI sceNpCppWebApiUnknown68(void) {
-    NotImplemented_nid_no_patch("mBagn+lW-iM");
-    return 0;
+void* APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V110DataStatus8getOwnerEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("mkWsKEh0h0o", sceNpCppWebApiUnknown69);
-int APS5_VABI sceNpCppWebApiUnknown69(void) {
-    NotImplemented_nid_no_patch("mkWsKEh0h0o");
+int APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V110DataStatus9getSlotIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("nE0ooeCMRm8", sceNpCppWebApiUnknown70);
-int APS5_VABI sceNpCppWebApiUnknown70(void) {
-    NotImplemented_nid_no_patch("nE0ooeCMRm8");
-    return 0;
+void* APS5_VABI _ZN3sce2Np9CppWebApi17TitleCloudStorage2V132GetMultiDataStatusesResponseBody17getDataStatusListEv(void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
+    return nullptr;
 }
 
-APS5_EXPORT("qf2I9BlKXis", sceNpCppWebApiUnknown71);
-int APS5_VABI sceNpCppWebApiUnknown71(void) {
-    NotImplemented_nid_no_patch("qf2I9BlKXis");
+std::uint32_t APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V132GetMultiDataStatusesResponseBody23getTotalDataStatusCountEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
-APS5_EXPORT("xwy1I52dE8o", sceNpCppWebApiUnknown72);
-int APS5_VABI sceNpCppWebApiUnknown72(void) {
-    NotImplemented_nid_no_patch("xwy1I52dE8o");
+std::uint64_t APS5_VABI _ZNK3sce2Np9CppWebApi17TitleCloudStorage2V15Owner12getAccountIdEv(const void* self) {
+    (void)self;
+    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 }
